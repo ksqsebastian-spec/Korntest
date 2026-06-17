@@ -417,6 +417,46 @@ body.menu-open .menu__nav a:nth-child(6){transition-delay:.46s}
 .apply h2{font-weight:500;font-size:clamp(1.2rem,2vw,1.6rem);letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.4rem}
 .apply p{font-family:'Cormorant Garamond',serif;font-size:1.25rem;line-height:1.6;color:#3a3633;max-width:48ch;margin-bottom:1.4rem}
 
+/* ---------------- KONTAKT + FUNNEL ---------------- */
+.kontakt{padding:clamp(7rem,15vh,10rem) var(--pad) clamp(4rem,10vh,7rem);display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(2.5rem,7vw,6rem);align-items:start}
+.kontakt__info{font-size:1.05rem;line-height:1.7;color:var(--ink)}
+.kontakt__info .k-name{font-family:'Cormorant Garamond',serif;font-size:1.7rem;margin-bottom:1.4rem}
+.kontakt__info p{margin-bottom:1.4rem}
+.kontakt__info .k-row span{display:inline-block;width:1.5em;color:var(--mut)}
+.kontakt__info a.uline{border-bottom:1px solid var(--line);transition:color .3s,border-color .3s}
+.kontakt__info a.uline:hover{color:var(--red);border-color:var(--red)}
+.kontakt__links{margin-top:.6rem;display:flex;gap:1.8rem}
+.kontakt__links a{color:var(--red);border-bottom:1px solid var(--red);padding-bottom:.2rem;transition:opacity .3s}
+.kontakt__links a:hover{opacity:.6}
+
+.funnel{position:relative;border:1px solid var(--line);padding:clamp(2rem,4vw,3.4rem);min-height:clamp(340px,50vh,470px);display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.funnel__bar{position:absolute;top:0;left:0;height:2px;background:var(--red);width:0;transition:width .6s var(--ease)}
+.funnel__top{position:absolute;top:1.3rem;left:clamp(2rem,4vw,3.4rem);right:clamp(2rem,4vw,3.4rem);display:flex;justify-content:space-between;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mut)}
+.funnel__back{cursor:none;background:none;border:none;color:var(--mut);font:inherit;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;opacity:0;pointer-events:none;transition:opacity .3s,color .3s}
+.funnel__back.show{opacity:1;pointer-events:auto}
+.funnel__back:hover{color:var(--red)}
+.f-step{animation:fIn .5s var(--ease)}
+@keyframes fIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.f-eyebrow{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--red);margin-bottom:1.1rem}
+.f-q{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(1.9rem,3.4vw,3.1rem);line-height:1.1;margin-bottom:1.8rem}
+.f-input{width:100%;border:none;border-bottom:1px solid var(--line);background:none;font-family:'Cormorant Garamond',serif;font-size:clamp(1.4rem,2.4vw,2.1rem);padding:.45rem 0;color:var(--ink);outline:none;transition:border-color .35s}
+.f-input::placeholder{color:#c4bfb8}
+.f-input:focus{border-color:var(--red)}
+.f-hint{margin-top:1.1rem;font-size:.74rem;letter-spacing:.06em;color:var(--mut);transition:color .3s}
+.f-hint.err{color:var(--red)}
+.f-hint b{color:var(--red);font-weight:400}
+.f-choices{display:flex;flex-direction:column}
+.f-choice{cursor:none;text-align:left;background:none;border:none;border-bottom:1px solid var(--line);font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,1.9vw,1.65rem);color:var(--ink);padding:.85rem 0;display:flex;justify-content:space-between;align-items:center;transition:color .3s,padding-left .35s var(--ease)}
+.f-choice:hover{color:var(--red);padding-left:.55rem}
+.f-choice::after{content:"→";opacity:0;transition:opacity .3s}
+.f-choice:hover::after{opacity:1}
+.f-actions{margin-top:1.9rem}
+.f-next{cursor:none;background:none;border:none;color:var(--red);font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;border-bottom:1px solid var(--red);padding-bottom:.35rem}
+.f-next:hover{opacity:.6}
+.f-summary{list-style:none;margin:1.4rem 0 2rem;display:flex;flex-direction:column;gap:.6rem;font-size:1rem;color:var(--mut)}
+.f-summary li span{display:inline-block;min-width:8.5em;color:var(--red);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase}
+.f-summary li b{color:var(--ink);font-weight:400}
+
 /* ---------------- REVEALS ---------------- */
 [data-reveal]{opacity:0;transform:translateY(34px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
 [data-reveal].is-in{opacity:1;transform:none}
@@ -434,6 +474,7 @@ body.menu-open .menu__nav a:nth-child(6){transition-delay:.46s}
   .burger{display:flex}
   .tagline{display:none}
   .insights{grid-template-columns:1fr}
+  .kontakt{grid-template-columns:1fr;gap:3rem}
   .secnav{float:none;width:auto;margin-bottom:2.5rem;flex-direction:row;flex-wrap:wrap;gap:1.2rem}
   .map__hq b{display:none}
   .sort{float:none;width:auto;margin-bottom:3rem}

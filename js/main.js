@@ -170,6 +170,102 @@
     t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
   }));
 
+  /* ---------- CONTACT FUNNEL ---------- */
+  const funnel = $('[data-funnel]');
+  if (funnel) {
+    const mailto = funnel.dataset.mailto || 'info@korn-windows.com';
+    const steps = [
+      { k: 'name', type: 'text', ph: 'Dein Name', eye: 'Kontakt — in 30 Sekunden', q: () => 'Wie heißt du?' },
+      { k: 'intent', type: 'choice', q: (a) => `Freut mich, ${a.name}. Worum geht es?`, opts: ['Neubau', 'Modernisierung', 'Produktberatung', 'Etwas anderes'] },
+      { k: 'product', type: 'choice', q: () => 'Welche KORN Linie reizt dich?', opts: ['KORN LIGNUM', 'KORN LIGNUM SECURE', 'KORN air-lux', 'KORN burckhardt’s glide', 'KORN metal', 'KORN retrac system', 'Noch unentschieden'] },
+      { k: 'place', type: 'text', ph: 'Ort / Land', q: (a) => `Wo entsteht ${a.name ? 'dein' : 'das'} Projekt?` },
+      { k: 'email', type: 'email', ph: 'E-Mail oder Telefon', q: (a) => `Wie erreichen wir dich, ${a.name}?` }
+    ];
+    const LABEL = { name: 'Name', intent: 'Anliegen', product: 'Produktlinie', place: 'Ort', email: 'Kontakt' };
+    const ans = {};
+    let i = 0;
+
+    const bar = document.createElement('div'); bar.className = 'funnel__bar';
+    const top = document.createElement('div'); top.className = 'funnel__top';
+    const back = document.createElement('button'); back.className = 'funnel__back'; back.type = 'button'; back.textContent = '‹ zurück';
+    const counter = document.createElement('span');
+    top.append(back, counter);
+    const stage = document.createElement('div'); stage.className = 'funnel__stage';
+    funnel.append(bar, top, stage);
+    back.addEventListener('click', () => { if (i > 0) { i--; render(); } });
+
+    function setBar() { bar.style.width = (i / steps.length * 100) + '%'; }
+
+    function commit(val) { ans[steps[i].k] = val; i++; render(); }
+
+    function render() {
+      setBar();
+      back.classList.toggle('show', i > 0);
+      counter.textContent = i < steps.length ? `${i + 1} / ${steps.length}` : 'Fertig';
+      stage.innerHTML = '';
+      if (i >= steps.length) return renderDone();
+      const s = steps[i];
+      const step = document.createElement('div'); step.className = 'f-step';
+      if (s.eye) { const e = document.createElement('p'); e.className = 'f-eyebrow'; e.textContent = s.eye; step.appendChild(e); }
+      const q = document.createElement('h2'); q.className = 'f-q'; q.textContent = s.q(ans); step.appendChild(q);
+
+      if (s.type === 'choice') {
+        const wrap = document.createElement('div'); wrap.className = 'f-choices';
+        s.opts.forEach(o => {
+          const b = document.createElement('button'); b.type = 'button'; b.className = 'f-choice'; b.dataset.link = '';
+          b.append(document.createTextNode(o));
+          b.addEventListener('click', () => commit(o));
+          wrap.appendChild(b);
+        });
+        step.appendChild(wrap);
+      } else {
+        const inp = document.createElement('input');
+        inp.className = 'f-input'; inp.type = s.type === 'email' ? 'text' : 'text';
+        inp.placeholder = s.ph; inp.value = ans[s.k] || '';
+        const hint = document.createElement('p'); hint.className = 'f-hint'; hint.innerHTML = 'Drücke <b>Enter ↵</b>';
+        const advance = () => {
+          const v = inp.value.trim();
+          if (!v) { hint.classList.add('err'); hint.textContent = 'Bitte gib hier etwas ein.'; inp.focus(); return; }
+          commit(v);
+        };
+        inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); advance(); } });
+        const act = document.createElement('div'); act.className = 'f-actions';
+        const nx = document.createElement('button'); nx.type = 'button'; nx.className = 'f-next'; nx.dataset.link = ''; nx.textContent = 'Weiter →';
+        nx.addEventListener('click', advance);
+        act.appendChild(nx);
+        step.append(inp, hint, act);
+        requestAnimationFrame(() => inp.focus({ preventScroll: true }));
+      }
+      stage.appendChild(step);
+    }
+
+    function renderDone() {
+      bar.style.width = '100%';
+      const step = document.createElement('div'); step.className = 'f-step';
+      const e = document.createElement('p'); e.className = 'f-eyebrow'; e.textContent = 'Fast geschafft';
+      const q = document.createElement('h2'); q.className = 'f-q'; q.textContent = `Danke, ${ans.name}.`;
+      const ul = document.createElement('ul'); ul.className = 'f-summary';
+      steps.forEach(s => {
+        if (!ans[s.k]) return;
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${LABEL[s.k]}</span><b>${ans[s.k]}</b>`;
+        ul.appendChild(li);
+      });
+      const subject = `Projektanfrage – ${ans.name || ''}`;
+      const body = steps.map(s => `${LABEL[s.k]}: ${ans[s.k] || '—'}`).join('\n');
+      const link = `mailto:${mailto}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      const act = document.createElement('div'); act.className = 'f-actions';
+      const send = document.createElement('a'); send.className = 'f-next'; send.dataset.link = ''; send.href = link; send.textContent = 'Anfrage senden →';
+      const edit = document.createElement('button'); edit.type = 'button'; edit.className = 'funnel__back show'; edit.style.position = 'static'; edit.style.marginLeft = '1.5rem'; edit.textContent = '‹ ändern';
+      edit.addEventListener('click', () => { i = 0; render(); });
+      act.append(send, edit);
+      step.append(e, q, ul, act);
+      stage.appendChild(step);
+    }
+
+    render();
+  }
+
   /* ---------- YEAR ---------- */
   const y = $('[data-year]'); if (y) y.textContent = new Date().getFullYear();
 })();
