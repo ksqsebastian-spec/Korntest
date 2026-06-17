@@ -30,8 +30,10 @@ const COPY = {
   recruit: {
     subject: (name) => `Danke für deine Bewerbung, ${name}`,
     notifyLabel: 'Neue Bewerbung',
-    intro: `vielen herzlichen Dank für deine Bewerbung — wir freuen uns riesig über dein Interesse an KORN.`,
-    middle: `Wir sehen uns deine Angaben in Ruhe an und melden uns <b style="color:#141414;">schnellstmöglich persönlich</b> bei dir.`,
+    intro: `vielen herzlichen Dank für deine Bewerbung — wir freuen uns riesig, dass du dir KORN als Ort für deinen nächsten Schritt vorstellen kannst. Dein Interesse ehrt uns.`,
+    middle: `Wir sehen uns deine Angaben jetzt in aller Ruhe an und melden uns <b style="color:#141414;">schnellstmöglich ganz persönlich</b> bei dir, um dich kennenzulernen.`,
+    extra: `Bei uns zählt der Mensch hinter der Bewerbung — und wir nehmen uns die Zeit, die du verdienst.`,
+    closing: `Bis dahin: schön, dass du den Weg zu uns gefunden hast.`,
     showPortfolioCta: false
   },
   portfolio: {
@@ -67,7 +69,8 @@ function customerEmail({ name, variant, baseUrl }) {
     <tr><td style="padding:20px 48px 0;font-size:17px;line-height:1.7;color:#3a3633;">
       <p style="margin:0 0 16px;">${c.intro}</p>
       <p style="margin:0 0 16px;">${c.middle}</p>
-      <p style="margin:0 0 4px;">Bis dahin: schön, dass du da bist.</p>
+      ${c.extra ? `<p style="margin:0 0 16px;">${c.extra}</p>` : ''}
+      <p style="margin:0 0 4px;">${c.closing || 'Bis dahin: schön, dass du da bist.'}</p>
     </td></tr>
     ${c.showPortfolioCta ? portfolioCta(baseUrl) : ''}
     <tr><td style="padding:26px 48px 44px;">
