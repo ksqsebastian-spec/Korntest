@@ -336,13 +336,30 @@
       });
       const subject = `${cfg.subject}${ans.name || ''}`;
       const body = steps.map(s => `${LABEL[s.k]}: ${ans[s.k] || '—'}`).join('\n');
-      const link = `mailto:${mailto}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      const mailtoLink = `mailto:${mailto}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
       const act = document.createElement('div'); act.className = 'f-actions';
-      const send = document.createElement('a'); send.className = 'f-next'; send.dataset.link = ''; send.href = link; send.textContent = cfg.send;
+      const send = document.createElement('button'); send.type = 'button'; send.className = 'f-next'; send.dataset.link = ''; send.textContent = cfg.send;
       const edit = document.createElement('button'); edit.type = 'button'; edit.className = 'funnel__back show'; edit.style.position = 'static'; edit.style.marginLeft = '1.5rem'; edit.textContent = '‹ ändern';
       edit.addEventListener('click', () => { i = 0; render(); });
+      const note = document.createElement('p'); note.className = 'f-hint'; note.style.marginTop = '1.2rem';
+      note.innerHTML = `Lieber direkt? <a href="${mailtoLink}" data-link style="color:var(--red);border-bottom:1px solid var(--red)">per E-Mail senden</a>`;
+      send.addEventListener('click', async () => {
+        send.disabled = true; const orig = send.textContent; send.textContent = 'Wird gesendet …';
+        try {
+          const r = await fetch('/api/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ variant: funnel.dataset.variant || 'contact', data: ans, labels: LABEL }) });
+          if (!r.ok) throw 0;
+          stage.innerHTML = '';
+          const ok = document.createElement('div'); ok.className = 'f-step';
+          ok.innerHTML = `<p class="f-eyebrow">Gesendet ✓</p><h2 class="f-q">Danke, ${ans.name}!</h2><p class="f-done">Deine Nachricht ist bei uns angekommen — wir melden uns schnellstmöglich persönlich bei dir.</p>`;
+          stage.appendChild(ok);
+        } catch (_) {
+          send.disabled = false; send.textContent = orig;
+          note.innerHTML = `Senden gerade nicht möglich — <a href="${mailtoLink}" data-link style="color:var(--red);border-bottom:1px solid var(--red)">per E-Mail senden</a>`;
+          window.location.href = mailtoLink;
+        }
+      });
       act.append(send, edit);
-      step.append(e, q, ul, act);
+      step.append(e, q, ul, act, note);
       stage.appendChild(step);
     }
 
