@@ -61,12 +61,18 @@ a{color:inherit;text-decoration:none}
 /* ---------------- BRAND + TOP-RIGHT NAV (no bar) ---------------- */
 body{--nav:#fff}
 body.nav-dark{--nav:var(--ink)}
-.brand{position:fixed;top:1.2rem;left:50%;transform:translateX(-50%);z-index:1000}
+.brand{position:absolute;top:1.2rem;left:50%;transform:translateX(-50%);z-index:1000}
 .brand svg{width:42px;height:auto;fill:var(--nav);transition:fill .55s var(--ease),transform .55s var(--ease)}
 .brand:hover svg{transform:scale(1.07)}
 body.nav-dark .brand svg{fill:var(--red)}
-.tagline{position:fixed;top:1.75rem;left:var(--pad);z-index:1000;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.95rem;letter-spacing:.02em;color:var(--nav);transition:color .55s var(--ease)}
+.tagline{position:absolute;top:1.75rem;left:var(--pad);z-index:1000;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.95rem;letter-spacing:.02em;color:var(--nav)}
 body.nav-dark .tagline{color:var(--red)}
+
+/* ---------------- PAGE TRANSITIONS ---------------- */
+main{animation:pageIn .7s var(--ease) both}
+@keyframes pageIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.pt{position:fixed;inset:0;z-index:8500;background:var(--paper);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .45s var(--ease),visibility .45s}
+.pt.show{opacity:1;visibility:visible}
 
 .topnav{position:fixed;top:1.5rem;right:var(--pad);z-index:1000;display:flex;flex-direction:column;align-items:flex-end;gap:.62rem;transition:transform .55s var(--ease),opacity .55s var(--ease)}
 .topnav.is-hidden{transform:translateY(-130%);opacity:0;pointer-events:none}

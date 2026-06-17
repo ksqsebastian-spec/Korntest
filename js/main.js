@@ -163,6 +163,23 @@
     }, { passive: true });
   }
 
+  /* ---------- PAGE TRANSITIONS (leave) ---------- */
+  if (!reduce) {
+    const pt = document.createElement('div'); pt.className = 'pt'; document.body.appendChild(pt);
+    // if we return via back/forward cache, hide the overlay
+    window.addEventListener('pageshow', () => pt.classList.remove('show'));
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a');
+      if (!a) return;
+      const href = a.getAttribute('href');
+      if (!href || a.target === '_blank' || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      if (!/\.html(\?|#|$)/.test(href)) return; // only internal pages
+      e.preventDefault();
+      pt.classList.add('show');
+      setTimeout(() => { window.location.href = href; }, 430);
+    });
+  }
+
   /* ---------- SMOOTH ANCHORS ---------- */
   $$('a[href^="#"]').forEach(a => a.addEventListener('click', (e) => {
     const id = a.getAttribute('href'); if (id.length < 2) return;
