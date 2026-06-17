@@ -235,18 +235,36 @@
     t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
   }));
 
-  /* ---------- CONTACT FUNNEL ---------- */
-  const funnel = $('[data-funnel]');
-  if (funnel) {
-    const mailto = funnel.dataset.mailto || 'info@korn-windows.com';
-    const steps = [
-      { k: 'name', type: 'text', ph: 'Dein Name', eye: 'Kontakt — in 30 Sekunden', q: () => 'Wie heißt du?' },
-      { k: 'intent', type: 'choice', q: (a) => `Freut mich, ${a.name}. Worum geht es?`, opts: ['Neubau', 'Modernisierung', 'Produktberatung', 'Etwas anderes'] },
-      { k: 'place', type: 'text', ph: 'Ort / Land', q: (a) => `Wo entsteht ${a.name ? 'dein' : 'das'} Projekt?` },
-      { k: 'email', type: 'email', ph: 'E-Mail-Adresse', q: (a) => `Wie erreichen wir dich, ${a.name}?` },
-      { k: 'phone', type: 'tel', ph: 'Telefonnummer (optional)', optional: true, q: () => 'Und telefonisch?' }
-    ];
-    const LABEL = { name: 'Name', intent: 'Anliegen', place: 'Ort', email: 'E-Mail', phone: 'Telefon' };
+  /* ---------- FUNNELS (contact + recruiting) ---------- */
+  const FUNNELS = {
+    contact: {
+      mailto: 'info@korn-windows.com', subject: 'Projektanfrage – ', send: 'Anfrage senden →',
+      label: { name: 'Name', intent: 'Anliegen', place: 'Ort', email: 'E-Mail', phone: 'Telefon' },
+      steps: [
+        { k: 'name', type: 'text', ph: 'Dein Name', eye: 'Kontakt — in 30 Sekunden', q: () => 'Wie heißt du?' },
+        { k: 'intent', type: 'choice', q: (a) => `Freut mich, ${a.name}. Worum geht es?`, opts: ['Neubau', 'Modernisierung', 'Produktberatung', 'Etwas anderes'] },
+        { k: 'place', type: 'text', ph: 'Ort / Land', q: (a) => `Wo entsteht ${a.name ? 'dein' : 'das'} Projekt?` },
+        { k: 'email', type: 'email', ph: 'E-Mail-Adresse', q: (a) => `Wie erreichen wir dich, ${a.name}?` },
+        { k: 'phone', type: 'tel', ph: 'Telefonnummer (optional)', optional: true, q: () => 'Und telefonisch?' }
+      ]
+    },
+    recruit: {
+      mailto: 'wilinski@korn-fenster.de', subject: 'Bewerbung – ', send: 'Bewerbung senden →',
+      label: { name: 'Name', position: 'Stelle', start: 'Verfügbar ab', email: 'E-Mail', phone: 'Telefon' },
+      steps: [
+        { k: 'name', type: 'text', ph: 'Dein Name', eye: 'Bewerbung — in 30 Sekunden', q: () => 'Wie heißt du?' },
+        { k: 'position', type: 'choice', q: (a) => `Hallo ${a.name}. Worauf hast du Lust?`, opts: ['Projektleiter*in / Arbeitsvorbereiter*in', 'Vertriebler*in', 'Tischler*in', 'Glaser*in', 'Initiativbewerbung'] },
+        { k: 'start', type: 'text', ph: 'z. B. sofort, in 3 Monaten', q: () => 'Ab wann könntest du starten?' },
+        { k: 'email', type: 'email', ph: 'E-Mail-Adresse', q: (a) => `Wie erreichen wir dich, ${a.name}?` },
+        { k: 'phone', type: 'tel', ph: 'Telefonnummer (optional)', optional: true, q: () => 'Und telefonisch?' }
+      ]
+    }
+  };
+
+  $$('[data-funnel]').forEach((funnel) => {
+    const cfg = FUNNELS[funnel.dataset.variant] || FUNNELS.contact;
+    const steps = cfg.steps, LABEL = cfg.label;
+    const mailto = funnel.dataset.mailto || cfg.mailto;
     const ans = {};
     let i = 0;
 
@@ -316,11 +334,11 @@
         li.innerHTML = `<span>${LABEL[s.k]}</span><b>${ans[s.k]}</b>`;
         ul.appendChild(li);
       });
-      const subject = `Projektanfrage – ${ans.name || ''}`;
+      const subject = `${cfg.subject}${ans.name || ''}`;
       const body = steps.map(s => `${LABEL[s.k]}: ${ans[s.k] || '—'}`).join('\n');
       const link = `mailto:${mailto}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
       const act = document.createElement('div'); act.className = 'f-actions';
-      const send = document.createElement('a'); send.className = 'f-next'; send.dataset.link = ''; send.href = link; send.textContent = 'Anfrage senden →';
+      const send = document.createElement('a'); send.className = 'f-next'; send.dataset.link = ''; send.href = link; send.textContent = cfg.send;
       const edit = document.createElement('button'); edit.type = 'button'; edit.className = 'funnel__back show'; edit.style.position = 'static'; edit.style.marginLeft = '1.5rem'; edit.textContent = '‹ ändern';
       edit.addEventListener('click', () => { i = 0; render(); });
       act.append(send, edit);
@@ -329,7 +347,7 @@
     }
 
     render();
-  }
+  });
 
   /* ---------- PROJEKTE FILTER (?ort=) ---------- */
   const pgrid = $('.pgrid');
