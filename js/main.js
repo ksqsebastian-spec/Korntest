@@ -243,9 +243,10 @@
       { k: 'name', type: 'text', ph: 'Dein Name', eye: 'Kontakt — in 30 Sekunden', q: () => 'Wie heißt du?' },
       { k: 'intent', type: 'choice', q: (a) => `Freut mich, ${a.name}. Worum geht es?`, opts: ['Neubau', 'Modernisierung', 'Produktberatung', 'Etwas anderes'] },
       { k: 'place', type: 'text', ph: 'Ort / Land', q: (a) => `Wo entsteht ${a.name ? 'dein' : 'das'} Projekt?` },
-      { k: 'email', type: 'email', ph: 'E-Mail oder Telefon', q: (a) => `Wie erreichen wir dich, ${a.name}?` }
+      { k: 'email', type: 'email', ph: 'E-Mail-Adresse', q: (a) => `Wie erreichen wir dich, ${a.name}?` },
+      { k: 'phone', type: 'tel', ph: 'Telefonnummer (optional)', optional: true, q: () => 'Und telefonisch?' }
     ];
-    const LABEL = { name: 'Name', intent: 'Anliegen', place: 'Ort', email: 'Kontakt' };
+    const LABEL = { name: 'Name', intent: 'Anliegen', place: 'Ort', email: 'E-Mail', phone: 'Telefon' };
     const ans = {};
     let i = 0;
 
@@ -286,10 +287,10 @@
         const inp = document.createElement('input');
         inp.className = 'f-input'; inp.type = s.type === 'email' ? 'text' : 'text';
         inp.placeholder = s.ph; inp.value = ans[s.k] || '';
-        const hint = document.createElement('p'); hint.className = 'f-hint'; hint.innerHTML = 'Drücke <b>Enter ↵</b>';
+        const hint = document.createElement('p'); hint.className = 'f-hint'; hint.innerHTML = s.optional ? 'Optional · <b>Enter ↵</b>' : 'Drücke <b>Enter ↵</b>';
         const advance = () => {
           const v = inp.value.trim();
-          if (!v) { hint.classList.add('err'); hint.textContent = 'Bitte gib hier etwas ein.'; inp.focus(); return; }
+          if (!v && !s.optional) { hint.classList.add('err'); hint.textContent = 'Bitte gib hier etwas ein.'; inp.focus(); return; }
           commit(v);
         };
         inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); advance(); } });
