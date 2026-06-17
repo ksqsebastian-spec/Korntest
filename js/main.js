@@ -242,11 +242,10 @@
     const steps = [
       { k: 'name', type: 'text', ph: 'Dein Name', eye: 'Kontakt — in 30 Sekunden', q: () => 'Wie heißt du?' },
       { k: 'intent', type: 'choice', q: (a) => `Freut mich, ${a.name}. Worum geht es?`, opts: ['Neubau', 'Modernisierung', 'Produktberatung', 'Etwas anderes'] },
-      { k: 'product', type: 'choice', q: () => 'Welche KORN Linie reizt dich?', opts: ['KORN LIGNUM', 'KORN LIGNUM SECURE', 'KORN air-lux', 'KORN burckhardt’s glide', 'KORN metal', 'KORN retrac system', 'Noch unentschieden'] },
       { k: 'place', type: 'text', ph: 'Ort / Land', q: (a) => `Wo entsteht ${a.name ? 'dein' : 'das'} Projekt?` },
       { k: 'email', type: 'email', ph: 'E-Mail oder Telefon', q: (a) => `Wie erreichen wir dich, ${a.name}?` }
     ];
-    const LABEL = { name: 'Name', intent: 'Anliegen', product: 'Produktlinie', place: 'Ort', email: 'Kontakt' };
+    const LABEL = { name: 'Name', intent: 'Anliegen', place: 'Ort', email: 'Kontakt' };
     const ans = {};
     let i = 0;
 
