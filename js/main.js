@@ -1,5 +1,5 @@
 /* =================================================================
-   KORN — finest windows & doors · interactions (shared)
+   Tischlerei Mehlig · interactions (shared)
    ================================================================= */
 (function () {
   'use strict';
@@ -238,7 +238,7 @@
   /* ---------- FUNNELS (contact + recruiting) ---------- */
   const FUNNELS = {
     contact: {
-      mailto: 'info@korn-windows.com', subject: 'Projektanfrage – ', send: 'Anfrage senden →',
+      mailto: 'info@tischlerei-mehlig.de', subject: 'Projektanfrage – ', send: 'Anfrage senden →',
       done: 'Deine Nachricht ist bei uns angekommen — wir melden uns schnellstmöglich persönlich bei dir.',
       label: { name: 'Name', intent: 'Anliegen', place: 'Ort', email: 'E-Mail', phone: 'Telefon' },
       steps: [
@@ -250,7 +250,7 @@
       ]
     },
     recruit: {
-      mailto: 'wilinski@korn-fenster.de', subject: 'Bewerbung – ', send: 'Bewerbung senden →',
+      mailto: 'bewerbung@tischlerei-mehlig.de', subject: 'Bewerbung – ', send: 'Bewerbung senden →',
       done: 'Deine Bewerbung ist bei uns angekommen — wir sehen sie uns in Ruhe an und melden uns schnellstmöglich bei dir.',
       label: { name: 'Name', position: 'Stelle', start: 'Verfügbar ab', email: 'E-Mail', phone: 'Telefon' },
       steps: [
@@ -262,7 +262,7 @@
       ]
     },
     portfolio: {
-      mailto: 'info@korn-windows.com', subject: 'Portfolio-Anfrage – ', send: 'Portfolio anfordern →',
+      mailto: 'info@tischlerei-mehlig.de', subject: 'Portfolio-Anfrage – ', send: 'Portfolio anfordern →',
       done: 'Dein Portfolio ist reserviert — wir verpacken es mit Sorgfalt und bringen es schnellstmöglich auf den Weg zu dir.',
       label: { name: 'Name', street: 'Adresse', city: 'PLZ / Ort', email: 'E-Mail' },
       steps: [

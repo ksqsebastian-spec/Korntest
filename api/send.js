@@ -5,14 +5,14 @@
 //   RESEND_API_KEY   (required) your Resend API key
 //   TEST_EMAIL       (optional) while no domain is verified, route ALL mail here
 //                    (must be your Resend account address, e.g. ksqsebastian@googlemail.com)
-//   RESEND_FROM      (optional) e.g. "KORN <hallo@korn-windows.com>" — needs a verified domain
-//   NOTIFY_CONTACT   (optional) inbox for enquiries   (default info@korn-windows.com)
-//   NOTIFY_RECRUIT   (optional) inbox for applications (default wilinski@korn-fenster.de)
+//   RESEND_FROM      (optional) e.g. "Tischlerei Mehlig <hallo@tischlerei-mehlig.de>" — needs a verified domain
+//   NOTIFY_CONTACT   (optional) inbox for enquiries   (default info@tischlerei-mehlig.de)
+//   NOTIFY_RECRUIT   (optional) inbox for applications (default bewerbung@tischlerei-mehlig.de)
 //   MAIL_IMAGE       (optional) hero image URL for the email
 
-const FROM = process.env.RESEND_FROM || 'KORN — finest windows & doors <onboarding@resend.dev>';
-const NOTIFY_CONTACT = process.env.NOTIFY_CONTACT || 'info@korn-windows.com';
-const NOTIFY_RECRUIT = process.env.NOTIFY_RECRUIT || 'wilinski@korn-fenster.de';
+const FROM = process.env.RESEND_FROM || 'Tischlerei Mehlig <onboarding@resend.dev>';
+const NOTIFY_CONTACT = process.env.NOTIFY_CONTACT || 'info@tischlerei-mehlig.de';
+const NOTIFY_RECRUIT = process.env.NOTIFY_RECRUIT || 'bewerbung@tischlerei-mehlig.de';
 const POC_TEST_TO = 'ksqsebastian@googlemail.com'; // POC: deliver here until a Resend domain is verified (then set RESEND_FROM)
 const IMG = process.env.MAIL_IMAGE || 'https://korn-fenster.de/media/pages/home/fd4dc234e0-1758639882/korn_lignum_usa.jpg';
 
@@ -23,14 +23,14 @@ const COPY = {
   contact: {
     subject: (name) => `Danke, ${name} — wir melden uns`,
     notifyLabel: 'Neue Anfrage',
-    intro: `vielen herzlichen Dank — wir freuen uns riesig, dass du dich für KORN entschieden hast. Dein Vertrauen bedeutet uns viel.`,
+    intro: `vielen herzlichen Dank — wir freuen uns riesig, dass du dich für die Tischlerei Mehlig entschieden hast. Dein Vertrauen bedeutet uns viel.`,
     middle: `Wir haben deine Nachricht erhalten und melden uns <b style="color:#141414;">schnellstmöglich persönlich &amp; telefonisch</b> bei dir, um alles Weitere in Ruhe zu besprechen.`,
     showPortfolioCta: true
   },
   recruit: {
     subject: (name) => `Danke für deine Bewerbung, ${name}`,
     notifyLabel: 'Neue Bewerbung',
-    intro: `vielen herzlichen Dank für deine Bewerbung — wir freuen uns riesig, dass du dir KORN als Ort für deinen nächsten Schritt vorstellen kannst. Dein Interesse ehrt uns.`,
+    intro: `vielen herzlichen Dank für deine Bewerbung — wir freuen uns riesig, dass du dir die Tischlerei Mehlig als Ort für deinen nächsten Schritt vorstellen kannst. Dein Interesse ehrt uns.`,
     middle: `Wir sehen uns deine Angaben jetzt in aller Ruhe an und melden uns <b style="color:#141414;">schnellstmöglich ganz persönlich</b> bei dir, um dich kennenzulernen.`,
     extra: `Bei uns zählt der Mensch hinter der Bewerbung — und wir nehmen uns die Zeit, die du verdienst.`,
     closing: `Bis dahin: schön, dass du den Weg zu uns gefunden hast.`,
@@ -63,7 +63,7 @@ function customerEmail({ name, variant, baseUrl }) {
   <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:92%;background:#ffffff;border:1px solid #e7e3dd;">
     <tr><td style="padding:0;"><img src="${IMG}" width="600" alt="" style="display:block;width:100%;height:auto;border:0;"></td></tr>
     <tr><td style="padding:40px 48px 0;">
-      <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:4px;color:#A02615;text-transform:uppercase;">KORN — finest windows &amp; doors</div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:4px;color:#A02615;text-transform:uppercase;">Tischlerei Mehlig</div>
       <div style="font-size:32px;line-height:1.15;color:#141414;margin-top:22px;">Hallo ${esc(name) || 'und herzlich willkommen'},</div>
     </td></tr>
     <tr><td style="padding:20px 48px 0;font-size:17px;line-height:1.7;color:#3a3633;">
@@ -75,12 +75,12 @@ function customerEmail({ name, variant, baseUrl }) {
     ${c.showPortfolioCta ? portfolioCta(baseUrl) : ''}
     <tr><td style="padding:26px 48px 44px;">
       <div style="font-size:18px;color:#141414;">Herzliche Grüße</div>
-      <div style="font-size:18px;color:#A02615;">dein KORN Team</div>
+      <div style="font-size:18px;color:#A02615;">dein Team der Tischlerei Mehlig</div>
     </td></tr>
     <tr><td style="padding:26px 48px;background:#141414;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.9;letter-spacing:.5px;color:#b9b3ac;">
-      <div style="color:#ffffff;font-size:13px;letter-spacing:5px;margin-bottom:6px;">K O R N</div>
+      <div style="color:#ffffff;font-size:13px;letter-spacing:5px;margin-bottom:6px;">M E H L I G</div>
       Von-Linné-Str. 1 · 22880 Wedel / Hamburg · Germany<br>
-      T +49 (0) 41 03 91 60 – 0 · <a href="mailto:info@korn-windows.com" style="color:#d98b7f;text-decoration:none;">info@korn-windows.com</a>
+      T +49 (0) 41 03 91 60 – 0 · <a href="mailto:info@tischlerei-mehlig.de" style="color:#d98b7f;text-decoration:none;">info@tischlerei-mehlig.de</a>
     </td></tr>
   </table>
 </td></tr></table></body></html>`;
@@ -90,7 +90,7 @@ function internalEmail({ rows, email, notifyLabel, routedNote }) {
   const list = rows.map(r => `<tr><td style="padding:6px 0;border-bottom:1px solid #eee;font-size:14px;color:#222;">${esc(r)}</td></tr>`).join('');
   return `<!doctype html><html><body style="margin:0;background:#fff;font-family:Arial,Helvetica,sans-serif;color:#222;">
   <div style="max-width:560px;margin:24px auto;padding:0 16px;">
-    <div style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#A02615;">${esc(notifyLabel)} · korn-fenster.de</div>
+    <div style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#A02615;">${esc(notifyLabel)} · tischlerei-mehlig.de</div>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;">${list}</table>
     <p style="margin-top:18px;font-size:14px;">Antworten an: <a href="mailto:${esc(email)}">${esc(email)}</a></p>
     ${routedNote ? `<p style="margin-top:10px;font-size:12px;color:#999;">${esc(routedNote)}</p>` : ''}
@@ -159,7 +159,7 @@ module.exports = async (req, res) => {
   });
   const internalPayload = {
     from: FROM, to: notifyTo,
-    subject: `${copy.notifyLabel} – ${name || email || 'KORN'}`,
+    subject: `${copy.notifyLabel} – ${name || email || 'Tischlerei Mehlig'}`,
     html: internalEmail({ rows, email, notifyLabel: copy.notifyLabel, routedNote })
   };
   if (emailValid) internalPayload.reply_to = email;
