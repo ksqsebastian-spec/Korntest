@@ -87,16 +87,18 @@ module.exports = async (req, res) => {
   const labels = body.labels || {};
   const name = String(data.name || '').slice(0, 80);
   const email = String(data.email || '').trim();
-  if (!/.+@.+\..+/.test(email)) { res.status(400).json({ error: 'invalid email' }); return; }
+  const emailValid = /.+@.+\..+/.test(email);
 
   const notifyReal = isRecruit ? NOTIFY_RECRUIT : NOTIFY_CONTACT;
   // Resend only delivers to your own address until a domain is verified.
   // Until RESEND_FROM (a verified-domain sender) is set, route ALL mail to the
   // test inbox so the flow works end-to-end; afterwards it goes to real recipients.
   const routeTo = process.env.TEST_EMAIL || (process.env.RESEND_FROM ? '' : POC_TEST_TO);
+  // A valid visitor e-mail is only required when actually sending to the visitor.
+  if (!routeTo && !emailValid) { res.status(400).json({ error: 'invalid email' }); return; }
   const customerTo = routeTo || email;
   const notifyTo = routeTo || notifyReal;
-  const routedNote = routeTo ? `Testmodus: alle Mails an ${routeTo} (Kunde: ${email}).` : '';
+  const routedNote = routeTo ? `Testmodus: alle Mails an ${routeTo} (Kunde: ${email || '—'}).` : '';
   const rows = Object.keys(labels).map(k => (data[k] ? `${labels[k]}: ${data[k]}` : null)).filter(Boolean);
 
   const send = async (payload) => {
@@ -116,11 +118,13 @@ module.exports = async (req, res) => {
     subject: isRecruit ? `Danke für deine Bewerbung, ${name}` : `Danke, ${name} — wir melden uns`,
     html: customerEmail({ name, isRecruit })
   });
-  const internal = await send({
-    from: FROM, to: notifyTo, reply_to: email,
-    subject: `${isRecruit ? 'Neue Bewerbung' : 'Neue Anfrage'} – ${name || email}`,
+  const internalPayload = {
+    from: FROM, to: notifyTo,
+    subject: `${isRecruit ? 'Neue Bewerbung' : 'Neue Anfrage'} – ${name || email || 'KORN'}`,
     html: internalEmail({ rows, email, isRecruit, routedNote })
-  });
+  };
+  if (emailValid) internalPayload.reply_to = email;
+  const internal = await send(internalPayload);
 
   if (customer.ok || internal.ok) {
     res.status(200).json({ ok: true, customer: customer.ok, internal: internal.ok });
