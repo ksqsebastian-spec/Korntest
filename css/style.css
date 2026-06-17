@@ -186,15 +186,18 @@ body.menu-open .menu__nav a:nth-child(6){transition-delay:.46s}
 .map__sub{color:var(--mut);max-width:50ch;margin:0 auto clamp(2.5rem,6vh,4rem)}
 .map__stage{position:relative;max-width:1100px;margin:0 auto;aspect-ratio:1010/666}
 .map__world{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:.5;filter:grayscale(1)}
-.map__bubble{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:.6rem;opacity:0}
+.map__bubble{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:.5rem;opacity:0}
+.map__bubble.is-lg{z-index:1}.map__bubble.is-md{z-index:2}.map__bubble.is-sm{z-index:3}
 .map.is-in .map__bubble{animation:bubbleIn .8s var(--ease) forwards}
+.map.is-in .map__bubble.is-md{animation-delay:.12s}
+.map.is-in .map__bubble.is-sm{animation-delay:.22s}
 @keyframes bubbleIn{from{opacity:0;transform:translate(-50%,-30%) scale(.6)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
-.map__dot{display:grid;place-items:center;border:1.5px solid var(--red);border-radius:50%;background:#fff;color:var(--ink);font-weight:500;line-height:1;flex:none;
-  font-variant-numeric:tabular-nums;box-shadow:0 8px 30px -12px rgba(160,38,21,.5)}
-.map__bubble.is-lg .map__dot{width:clamp(74px,9vw,116px);height:clamp(74px,9vw,116px);font-size:clamp(1.1rem,1.9vw,1.7rem)}
-.map__bubble.is-md .map__dot{width:clamp(44px,5vw,60px);height:clamp(44px,5vw,60px);font-size:.95rem}
-.map__bubble.is-sm .map__dot{width:clamp(30px,3.4vw,40px);height:clamp(30px,3.4vw,40px);font-size:.78rem}
-.map__label{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);white-space:nowrap}
+.map__dot{display:grid;place-items:center;border:1.5px solid var(--red);border-radius:50%;color:var(--ink);font-weight:500;line-height:1;flex:none;
+  font-variant-numeric:tabular-nums;box-shadow:0 10px 34px -14px rgba(160,38,21,.55);backdrop-filter:blur(2px)}
+.map__bubble.is-lg .map__dot{width:clamp(64px,7.6vw,104px);height:clamp(64px,7.6vw,104px);font-size:clamp(1.05rem,1.8vw,1.6rem);background:rgba(255,255,255,.82)}
+.map__bubble.is-md .map__dot{width:clamp(40px,4.6vw,56px);height:clamp(40px,4.6vw,56px);font-size:.92rem;background:#fff}
+.map__bubble.is-sm .map__dot{width:clamp(28px,3.2vw,38px);height:clamp(28px,3.2vw,38px);font-size:.76rem;background:#fff}
+.map__label{font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--mut);white-space:nowrap;text-shadow:0 0 6px var(--paper),0 0 6px var(--paper)}
 .map__bubble[data-side="left"]{flex-direction:row-reverse}
 
 /* ---------------- ABOUT ---------------- */
