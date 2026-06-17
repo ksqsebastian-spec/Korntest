@@ -456,9 +456,21 @@ a.map__bubble{text-decoration:none;color:inherit}
 .kontakt__info .k-row span{display:inline-block;width:1.5em;color:var(--mut)}
 .kontakt__info a.uline{border-bottom:1px solid var(--line);transition:color .3s,border-color .3s}
 .kontakt__info a.uline:hover{color:var(--red);border-color:var(--red)}
-.kontakt__links{margin-top:.6rem;display:flex;gap:1.8rem}
-.kontakt__links a{color:var(--red);border-bottom:1px solid var(--red);padding-bottom:.2rem;transition:opacity .3s}
+.kontakt__links{margin-top:1.5rem;display:flex;flex-direction:column;align-items:flex-start;gap:1.05rem}
+.kontakt__links a{color:var(--red);border-bottom:1px solid var(--red);padding-bottom:.2rem;white-space:nowrap;transition:opacity .3s}
 .kontakt__links a:hover{opacity:.6}
+
+/* ---------- Legal pages (Impressum / Datenschutz) ---------- */
+.legal{max-width:760px;margin:0 auto;padding:clamp(11rem,24vh,15rem) var(--pad) clamp(4rem,10vh,7rem)}
+.legal__eyebrow{font-size:.74rem;letter-spacing:.28em;text-transform:uppercase;color:var(--red);margin-bottom:1.1rem}
+.legal h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(2.4rem,5vw,3.6rem);line-height:1.05;margin-bottom:2.6rem}
+.legal h2{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(1.4rem,2.6vw,1.9rem);margin:2.6rem 0 .8rem}
+.legal p,.legal li{font-size:1rem;line-height:1.8;color:#3a3633;margin-bottom:1rem}
+.legal a{color:var(--red);border-bottom:1px solid var(--red);transition:opacity .3s}
+.legal a:hover{opacity:.6}
+.legal ul{list-style:none;padding-left:0}
+.legal .legal__note{font-size:.8rem;color:var(--mut);border-left:2px solid var(--line);padding-left:1rem;margin:1.4rem 0}
+.legal__updated{margin-top:3rem;font-size:.78rem;letter-spacing:.04em;color:var(--mut)}
 
 .funnel{position:relative;border:1px solid var(--line);padding:clamp(2rem,4vw,3.4rem);min-height:clamp(340px,50vh,470px);display:flex;flex-direction:column;justify-content:center;overflow:hidden}
 .funnel__bar{position:absolute;top:0;left:0;height:2px;background:var(--red);width:0;transition:width .6s var(--ease)}
