@@ -239,6 +239,7 @@
   const FUNNELS = {
     contact: {
       mailto: 'info@korn-windows.com', subject: 'Projektanfrage – ', send: 'Anfrage senden →',
+      done: 'Deine Nachricht ist bei uns angekommen — wir melden uns schnellstmöglich persönlich bei dir.',
       label: { name: 'Name', intent: 'Anliegen', place: 'Ort', email: 'E-Mail', phone: 'Telefon' },
       steps: [
         { k: 'name', type: 'text', ph: 'Dein Name', eye: 'Kontakt — in 30 Sekunden', q: () => 'Wie heißt du?' },
@@ -250,6 +251,7 @@
     },
     recruit: {
       mailto: 'wilinski@korn-fenster.de', subject: 'Bewerbung – ', send: 'Bewerbung senden →',
+      done: 'Deine Bewerbung ist bei uns angekommen — wir sehen sie uns in Ruhe an und melden uns schnellstmöglich bei dir.',
       label: { name: 'Name', position: 'Stelle', start: 'Verfügbar ab', email: 'E-Mail', phone: 'Telefon' },
       steps: [
         { k: 'name', type: 'text', ph: 'Dein Name', eye: 'Bewerbung — in 30 Sekunden', q: () => 'Wie heißt du?' },
@@ -257,6 +259,17 @@
         { k: 'start', type: 'text', ph: 'z. B. sofort, in 3 Monaten', q: () => 'Ab wann könntest du starten?' },
         { k: 'email', type: 'email', ph: 'E-Mail-Adresse', q: (a) => `Wie erreichen wir dich, ${a.name}?` },
         { k: 'phone', type: 'tel', ph: 'Telefonnummer (optional)', optional: true, q: () => 'Und telefonisch?' }
+      ]
+    },
+    portfolio: {
+      mailto: 'info@korn-windows.com', subject: 'Portfolio-Anfrage – ', send: 'Portfolio anfordern →',
+      done: 'Dein Portfolio ist reserviert — wir verpacken es mit Sorgfalt und bringen es schnellstmöglich auf den Weg zu dir.',
+      label: { name: 'Name', street: 'Adresse', city: 'PLZ / Ort', email: 'E-Mail' },
+      steps: [
+        { k: 'name', type: 'text', ph: 'Dein Name', eye: 'Portfolio — in 30 Sekunden', q: () => 'Wie heißt du?' },
+        { k: 'street', type: 'text', ph: 'Straße & Hausnummer', q: (a) => `Wohin dürfen wir es senden, ${a.name}?` },
+        { k: 'city', type: 'text', ph: 'PLZ & Ort', q: () => 'PLZ und Ort?' },
+        { k: 'email', type: 'email', ph: 'E-Mail-Adresse', q: () => 'Und deine E-Mail für die Bestätigung?' }
       ]
     }
   };
@@ -350,7 +363,7 @@
           if (!r.ok) throw 0;
           stage.innerHTML = '';
           const ok = document.createElement('div'); ok.className = 'f-step';
-          ok.innerHTML = `<p class="f-eyebrow">Gesendet ✓</p><h2 class="f-q">Danke, ${ans.name}!</h2><p class="f-done">Deine Nachricht ist bei uns angekommen — wir melden uns schnellstmöglich persönlich bei dir.</p>`;
+          ok.innerHTML = `<p class="f-eyebrow">Gesendet ✓</p><h2 class="f-q">Danke, ${ans.name}!</h2><p class="f-done">${cfg.done || 'Deine Nachricht ist bei uns angekommen — wir melden uns schnellstmöglich persönlich bei dir.'}</p>`;
           stage.appendChild(ok);
         } catch (_) {
           send.disabled = false; send.textContent = orig;

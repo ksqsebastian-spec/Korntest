@@ -18,13 +18,42 @@ const IMG = process.env.MAIL_IMAGE || 'https://korn-fenster.de/media/pages/home/
 
 const esc = (s) => String(s == null ? '' : s).replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
 
-function customerEmail({ name, isRecruit }) {
-  const intro = isRecruit
-    ? `vielen herzlichen Dank für deine Bewerbung — wir freuen uns riesig über dein Interesse an KORN.`
-    : `vielen herzlichen Dank — wir freuen uns riesig, dass du dich für KORN entschieden hast. Dein Vertrauen bedeutet uns viel.`;
-  const middle = isRecruit
-    ? `Wir sehen uns deine Angaben in Ruhe an und melden uns <b style="color:#141414;">schnellstmöglich persönlich</b> bei dir.`
-    : `Wir haben deine Nachricht erhalten und melden uns <b style="color:#141414;">schnellstmöglich persönlich &amp; telefonisch</b> bei dir, um alles Weitere in Ruhe zu besprechen.`;
+// Copy per funnel variant.
+const COPY = {
+  contact: {
+    subject: (name) => `Danke, ${name} — wir melden uns`,
+    notifyLabel: 'Neue Anfrage',
+    intro: `vielen herzlichen Dank — wir freuen uns riesig, dass du dich für KORN entschieden hast. Dein Vertrauen bedeutet uns viel.`,
+    middle: `Wir haben deine Nachricht erhalten und melden uns <b style="color:#141414;">schnellstmöglich persönlich &amp; telefonisch</b> bei dir, um alles Weitere in Ruhe zu besprechen.`,
+    showPortfolioCta: true
+  },
+  recruit: {
+    subject: (name) => `Danke für deine Bewerbung, ${name}`,
+    notifyLabel: 'Neue Bewerbung',
+    intro: `vielen herzlichen Dank für deine Bewerbung — wir freuen uns riesig über dein Interesse an KORN.`,
+    middle: `Wir sehen uns deine Angaben in Ruhe an und melden uns <b style="color:#141414;">schnellstmöglich persönlich</b> bei dir.`,
+    showPortfolioCta: false
+  },
+  portfolio: {
+    subject: (name) => `Dein Portfolio ist unterwegs, ${name}`,
+    notifyLabel: 'Portfolio-Anfrage',
+    intro: `vielen herzlichen Dank für deine Anfrage — wir freuen uns riesig, dir unser physisches Portfolio zusenden zu dürfen.`,
+    middle: `Wir verpacken es mit Sorgfalt und bringen es <b style="color:#141414;">schnellstmöglich auf den Weg zu dir</b>. Lass dich von unseren Projekten in Ruhe inspirieren — gedruckt, zum Anfassen.`,
+    showPortfolioCta: false
+  }
+};
+
+function portfolioCta(baseUrl) {
+  if (!baseUrl) return '';
+  return `<tr><td style="padding:8px 48px 0;">
+      <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="background:#A02615;">
+        <a href="${baseUrl}/portfolio.html" style="display:inline-block;padding:14px 26px;font-family:Arial,Helvetica,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#ffffff;text-decoration:none;">Physisches Portfolio anfragen →</a>
+      </td></tr></table>
+    </td></tr>`;
+}
+
+function customerEmail({ name, variant, baseUrl }) {
+  const c = COPY[variant] || COPY.contact;
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
 <body style="margin:0;padding:0;background:#f1efea;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1efea;padding:32px 0;font-family:Georgia,'Times New Roman',serif;">
@@ -36,10 +65,11 @@ function customerEmail({ name, isRecruit }) {
       <div style="font-size:32px;line-height:1.15;color:#141414;margin-top:22px;">Hallo ${esc(name) || 'und herzlich willkommen'},</div>
     </td></tr>
     <tr><td style="padding:20px 48px 0;font-size:17px;line-height:1.7;color:#3a3633;">
-      <p style="margin:0 0 16px;">${intro}</p>
-      <p style="margin:0 0 16px;">${middle}</p>
+      <p style="margin:0 0 16px;">${c.intro}</p>
+      <p style="margin:0 0 16px;">${c.middle}</p>
       <p style="margin:0 0 4px;">Bis dahin: schön, dass du da bist.</p>
     </td></tr>
+    ${c.showPortfolioCta ? portfolioCta(baseUrl) : ''}
     <tr><td style="padding:26px 48px 44px;">
       <div style="font-size:18px;color:#141414;">Herzliche Grüße</div>
       <div style="font-size:18px;color:#A02615;">dein KORN Team</div>
@@ -53,11 +83,11 @@ function customerEmail({ name, isRecruit }) {
 </td></tr></table></body></html>`;
 }
 
-function internalEmail({ rows, email, isRecruit, routedNote }) {
+function internalEmail({ rows, email, notifyLabel, routedNote }) {
   const list = rows.map(r => `<tr><td style="padding:6px 0;border-bottom:1px solid #eee;font-size:14px;color:#222;">${esc(r)}</td></tr>`).join('');
   return `<!doctype html><html><body style="margin:0;background:#fff;font-family:Arial,Helvetica,sans-serif;color:#222;">
   <div style="max-width:560px;margin:24px auto;padding:0 16px;">
-    <div style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#A02615;">${isRecruit ? 'Neue Bewerbung' : 'Neue Anfrage'} · korn-fenster.de</div>
+    <div style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#A02615;">${esc(notifyLabel)} · korn-fenster.de</div>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;">${list}</table>
     <p style="margin-top:18px;font-size:14px;">Antworten an: <a href="mailto:${esc(email)}">${esc(email)}</a></p>
     ${routedNote ? `<p style="margin-top:10px;font-size:12px;color:#999;">${esc(routedNote)}</p>` : ''}
@@ -82,14 +112,20 @@ module.exports = async (req, res) => {
   if (!key) { res.status(500).json({ error: 'RESEND_API_KEY not configured' }); return; }
 
   const body = await readBody(req);
-  const isRecruit = body.variant === 'recruit';
+  const variant = ['contact', 'recruit', 'portfolio'].includes(body.variant) ? body.variant : 'contact';
+  const copy = COPY[variant];
   const data = body.data || {};
   const labels = body.labels || {};
   const name = String(data.name || '').slice(0, 80);
   const email = String(data.email || '').trim();
   const emailValid = /.+@.+\..+/.test(email);
 
-  const notifyReal = isRecruit ? NOTIFY_RECRUIT : NOTIFY_CONTACT;
+  // Base URL for links inside the email (e.g. the portfolio CTA button).
+  const proto = (req.headers['x-forwarded-proto'] || 'https').split(',')[0].trim();
+  const host = req.headers['x-forwarded-host'] || req.headers.host;
+  const baseUrl = host ? `${proto}://${host}` : '';
+
+  const notifyReal = variant === 'recruit' ? NOTIFY_RECRUIT : NOTIFY_CONTACT;
   // Resend only delivers to your own address until a domain is verified.
   // Until RESEND_FROM (a verified-domain sender) is set, route ALL mail to the
   // test inbox so the flow works end-to-end; afterwards it goes to real recipients.
@@ -115,13 +151,13 @@ module.exports = async (req, res) => {
 
   const customer = await send({
     from: FROM, to: customerTo, reply_to: notifyReal,
-    subject: isRecruit ? `Danke für deine Bewerbung, ${name}` : `Danke, ${name} — wir melden uns`,
-    html: customerEmail({ name, isRecruit })
+    subject: copy.subject(name || 'und herzlich willkommen'),
+    html: customerEmail({ name, variant, baseUrl })
   });
   const internalPayload = {
     from: FROM, to: notifyTo,
-    subject: `${isRecruit ? 'Neue Bewerbung' : 'Neue Anfrage'} – ${name || email || 'KORN'}`,
-    html: internalEmail({ rows, email, isRecruit, routedNote })
+    subject: `${copy.notifyLabel} – ${name || email || 'KORN'}`,
+    html: internalEmail({ rows, email, notifyLabel: copy.notifyLabel, routedNote })
   };
   if (emailValid) internalPayload.reply_to = email;
   const internal = await send(internalPayload);
