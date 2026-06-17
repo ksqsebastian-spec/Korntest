@@ -7,6 +7,35 @@
   const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ---------- I18N ---------- */
+  const LANG = (document.documentElement.lang || 'de').toLowerCase().startsWith('en') ? 'en' : 'de';
+  const T = {
+    de: {
+      enter: 'Drücke <b>Enter ↵</b>', optional: 'Optional · <b>Enter ↵</b>',
+      empty: 'Bitte gib hier etwas ein.', invalidEmail: 'Bitte gib eine gültige E-Mail-Adresse ein.',
+      invalidPhone: 'Bitte gib eine gültige Telefonnummer ein.', next: 'Weiter →', done: 'Fertig',
+      almost: 'Fast geschafft', back: '‹ zurück', change: '‹ ändern', sending: 'Wird gesendet …',
+      sentEye: 'Gesendet ✓', thanks: (n) => `Danke, ${n}.`, sentH: (n) => `Danke, ${n}!`,
+      directPre: 'Lieber direkt? ', directLink: 'per E-Mail senden', failPre: 'Senden gerade nicht möglich — ',
+      projects: 'Projekte', viewProjects: 'Projekte ansehen →', onRequest: 'Projekte weltweit — auf Anfrage',
+      image: 'Bild', filterAll: 'Alle Projekte ›',
+      filterIn: (ort, n) => `Projekte in <b>${ort}</b> · ${n} `,
+      filterNone: (ort) => `Für <b>${ort}</b> zeigen wir Projekte gern auf Anfrage. `
+    },
+    en: {
+      enter: 'Press <b>Enter ↵</b>', optional: 'Optional · <b>Enter ↵</b>',
+      empty: 'Please enter something here.', invalidEmail: 'Please enter a valid email address.',
+      invalidPhone: 'Please enter a valid phone number.', next: 'Next →', done: 'Done',
+      almost: 'Almost there', back: '‹ back', change: '‹ edit', sending: 'Sending …',
+      sentEye: 'Sent ✓', thanks: (n) => `Thank you, ${n}.`, sentH: (n) => `Thank you, ${n}!`,
+      directPre: 'Prefer email? ', directLink: 'send by email', failPre: "Sending isn't possible right now — ",
+      projects: 'projects', viewProjects: 'View projects →', onRequest: 'Projects worldwide — on request',
+      image: 'Image', filterAll: 'All projects ›',
+      filterIn: (ort, n) => `Projects in <b>${ort}</b> · ${n} `,
+      filterNone: (ort) => `For <b>${ort}</b> we’re happy to show projects on request. `
+    }
+  }[LANG];
+
   /* ---------- REVEALS ---------- */
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
@@ -76,7 +105,7 @@
     const slides = $$('.hero__slide', slider), dotsWrap = $('[data-dots]');
     let i = 0, timer;
     slides.forEach((_, n) => {
-      const b = document.createElement('button'); b.setAttribute('aria-label', 'Bild ' + (n + 1));
+      const b = document.createElement('button'); b.setAttribute('aria-label', t.image + ' ' + (n + 1));
       if (n === 0) b.classList.add('is-active'); b.addEventListener('click', () => go(n, true)); dotsWrap.appendChild(b);
     });
     const dots = $$('button', dotsWrap);
@@ -145,8 +174,8 @@
           const arch = (b.dataset.arch || '').split(';').filter(Boolean);
           const list = arch.length
             ? '<ul>' + arch.map(a => `<li>${a}</li>`).join('') + '</ul>'
-            : '<ul><li>Projekte weltweit — auf Anfrage</li></ul>';
-          dossier.innerHTML = `<p class="map__dossier__k">${label}</p><p class="map__dossier__n">${num} <small>Projekte</small></p>${list}<p class="map__dossier__go">Projekte ansehen →</p>`;
+            : `<ul><li>${t.onRequest}</li></ul>`;
+          dossier.innerHTML = `<p class="map__dossier__k">${label}</p><p class="map__dossier__n">${num} <small>${t.projects}</small></p>${list}<p class="map__dossier__go">${t.viewProjects}</p>`;
           const lx = parseFloat(b.style.left), ty = parseFloat(b.style.top);
           dossier.style.left = lx + '%'; dossier.style.top = ty + '%';
           dossier.style.transform = lx > 55 ? 'translate(calc(-100% - 30px),-50%)' : 'translate(30px,-50%)';
@@ -235,44 +264,83 @@
     t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
   }));
 
-  /* ---------- FUNNELS (contact + recruiting) ---------- */
+  /* ---------- FUNNELS (contact + recruiting + portfolio) ---------- */
   const FUNNELS = {
-    contact: {
-      mailto: 'info@tischlerei-mehlig.de', subject: 'Projektanfrage – ', send: 'Anfrage senden →',
-      done: 'Deine Nachricht ist bei uns angekommen — wir melden uns schnellstmöglich persönlich bei dir.',
-      label: { name: 'Name', intent: 'Anliegen', place: 'Ort', email: 'E-Mail', phone: 'Telefon' },
-      steps: [
-        { k: 'name', type: 'text', ph: 'Dein Name', eye: 'Kontakt — in 30 Sekunden', q: () => 'Wie heißt du?' },
-        { k: 'intent', type: 'choice', q: (a) => `Freut mich, ${a.name}. Worum geht es?`, opts: ['Neubau', 'Modernisierung', 'Produktberatung', 'Etwas anderes'] },
-        { k: 'place', type: 'text', ph: 'Ort / Land', q: (a) => `Wo entsteht ${a.name ? 'dein' : 'das'} Projekt?` },
-        { k: 'email', type: 'email', ph: 'E-Mail-Adresse', q: (a) => `Wie erreichen wir dich, ${a.name}?` },
-        { k: 'phone', type: 'tel', ph: 'Telefonnummer (optional)', optional: true, q: () => 'Und telefonisch?' }
-      ]
+    de: {
+      contact: {
+        mailto: 'info@tischlerei-mehlig.de', subject: 'Projektanfrage – ', send: 'Anfrage senden →',
+        done: 'Deine Nachricht ist bei uns angekommen — wir melden uns schnellstmöglich persönlich bei dir.',
+        label: { name: 'Name', intent: 'Anliegen', place: 'Ort', email: 'E-Mail', phone: 'Telefon' },
+        steps: [
+          { k: 'name', type: 'text', ph: 'Dein Name', eye: 'Kontakt — in 30 Sekunden', q: () => 'Wie heißt du?' },
+          { k: 'intent', type: 'choice', q: (a) => `Freut mich, ${a.name}. Worum geht es?`, opts: ['Neubau', 'Modernisierung', 'Produktberatung', 'Etwas anderes'] },
+          { k: 'place', type: 'text', ph: 'Ort / Land', q: (a) => `Wo entsteht ${a.name ? 'dein' : 'das'} Projekt?` },
+          { k: 'email', type: 'email', ph: 'E-Mail-Adresse', q: (a) => `Wie erreichen wir dich, ${a.name}?` },
+          { k: 'phone', type: 'tel', ph: 'Telefonnummer (optional)', optional: true, q: () => 'Und telefonisch?' }
+        ]
+      },
+      recruit: {
+        mailto: 'bewerbung@tischlerei-mehlig.de', subject: 'Bewerbung – ', send: 'Bewerbung senden →',
+        done: 'Deine Bewerbung ist bei uns angekommen — wir sehen sie uns in Ruhe an und melden uns schnellstmöglich bei dir.',
+        label: { name: 'Name', position: 'Stelle', start: 'Verfügbar ab', email: 'E-Mail', phone: 'Telefon' },
+        steps: [
+          { k: 'name', type: 'text', ph: 'Dein Name', eye: 'Bewerbung — in 30 Sekunden', q: () => 'Wie heißt du?' },
+          { k: 'position', type: 'choice', q: (a) => `Hallo ${a.name}. Worauf hast du Lust?`, opts: ['Projektleiter*in / Arbeitsvorbereiter*in', 'Vertriebler*in', 'Tischler*in', 'Glaser*in', 'Initiativbewerbung'] },
+          { k: 'start', type: 'text', ph: 'z. B. sofort, in 3 Monaten', q: () => 'Ab wann könntest du starten?' },
+          { k: 'email', type: 'email', ph: 'E-Mail-Adresse', q: (a) => `Wie erreichen wir dich, ${a.name}?` },
+          { k: 'phone', type: 'tel', ph: 'Telefonnummer (optional)', optional: true, q: () => 'Und telefonisch?' }
+        ]
+      },
+      portfolio: {
+        mailto: 'info@tischlerei-mehlig.de', subject: 'Portfolio-Anfrage – ', send: 'Portfolio anfordern →',
+        done: 'Dein Portfolio ist reserviert — wir verpacken es mit Sorgfalt und bringen es schnellstmöglich auf den Weg zu dir.',
+        label: { name: 'Name', street: 'Adresse', city: 'PLZ / Ort', email: 'E-Mail' },
+        steps: [
+          { k: 'name', type: 'text', ph: 'Dein Name', eye: 'Portfolio — in 30 Sekunden', q: () => 'Wie heißt du?' },
+          { k: 'street', type: 'text', ph: 'Straße & Hausnummer', q: (a) => `Wohin dürfen wir es senden, ${a.name}?` },
+          { k: 'city', type: 'text', ph: 'PLZ & Ort', q: () => 'PLZ und Ort?' },
+          { k: 'email', type: 'email', ph: 'E-Mail-Adresse', q: () => 'Und deine E-Mail für die Bestätigung?' }
+        ]
+      }
     },
-    recruit: {
-      mailto: 'bewerbung@tischlerei-mehlig.de', subject: 'Bewerbung – ', send: 'Bewerbung senden →',
-      done: 'Deine Bewerbung ist bei uns angekommen — wir sehen sie uns in Ruhe an und melden uns schnellstmöglich bei dir.',
-      label: { name: 'Name', position: 'Stelle', start: 'Verfügbar ab', email: 'E-Mail', phone: 'Telefon' },
-      steps: [
-        { k: 'name', type: 'text', ph: 'Dein Name', eye: 'Bewerbung — in 30 Sekunden', q: () => 'Wie heißt du?' },
-        { k: 'position', type: 'choice', q: (a) => `Hallo ${a.name}. Worauf hast du Lust?`, opts: ['Projektleiter*in / Arbeitsvorbereiter*in', 'Vertriebler*in', 'Tischler*in', 'Glaser*in', 'Initiativbewerbung'] },
-        { k: 'start', type: 'text', ph: 'z. B. sofort, in 3 Monaten', q: () => 'Ab wann könntest du starten?' },
-        { k: 'email', type: 'email', ph: 'E-Mail-Adresse', q: (a) => `Wie erreichen wir dich, ${a.name}?` },
-        { k: 'phone', type: 'tel', ph: 'Telefonnummer (optional)', optional: true, q: () => 'Und telefonisch?' }
-      ]
-    },
-    portfolio: {
-      mailto: 'info@tischlerei-mehlig.de', subject: 'Portfolio-Anfrage – ', send: 'Portfolio anfordern →',
-      done: 'Dein Portfolio ist reserviert — wir verpacken es mit Sorgfalt und bringen es schnellstmöglich auf den Weg zu dir.',
-      label: { name: 'Name', street: 'Adresse', city: 'PLZ / Ort', email: 'E-Mail' },
-      steps: [
-        { k: 'name', type: 'text', ph: 'Dein Name', eye: 'Portfolio — in 30 Sekunden', q: () => 'Wie heißt du?' },
-        { k: 'street', type: 'text', ph: 'Straße & Hausnummer', q: (a) => `Wohin dürfen wir es senden, ${a.name}?` },
-        { k: 'city', type: 'text', ph: 'PLZ & Ort', q: () => 'PLZ und Ort?' },
-        { k: 'email', type: 'email', ph: 'E-Mail-Adresse', q: () => 'Und deine E-Mail für die Bestätigung?' }
-      ]
+    en: {
+      contact: {
+        mailto: 'info@tischlerei-mehlig.de', subject: 'Project enquiry – ', send: 'Send enquiry →',
+        done: 'Your message has reached us — we’ll get back to you personally as soon as possible.',
+        label: { name: 'Name', intent: 'Subject', place: 'Location', email: 'Email', phone: 'Phone' },
+        steps: [
+          { k: 'name', type: 'text', ph: 'Your name', eye: 'Contact — in 30 seconds', q: () => 'What’s your name?' },
+          { k: 'intent', type: 'choice', q: (a) => `Nice to meet you, ${a.name}. What’s it about?`, opts: ['New build', 'Renovation', 'Product advice', 'Something else'] },
+          { k: 'place', type: 'text', ph: 'Town / country', q: (a) => `Where is ${a.name ? 'your' : 'the'} project?` },
+          { k: 'email', type: 'email', ph: 'Email address', q: (a) => `How can we reach you, ${a.name}?` },
+          { k: 'phone', type: 'tel', ph: 'Phone number (optional)', optional: true, q: () => 'And by phone?' }
+        ]
+      },
+      recruit: {
+        mailto: 'bewerbung@tischlerei-mehlig.de', subject: 'Application – ', send: 'Send application →',
+        done: 'Your application has reached us — we’ll review it carefully and get back to you as soon as possible.',
+        label: { name: 'Name', position: 'Role', start: 'Available from', email: 'Email', phone: 'Phone' },
+        steps: [
+          { k: 'name', type: 'text', ph: 'Your name', eye: 'Application — in 30 seconds', q: () => 'What’s your name?' },
+          { k: 'position', type: 'choice', q: (a) => `Hi ${a.name}. What are you keen on?`, opts: ['Project manager / work scheduler', 'Sales', 'Joiner', 'Glazier', 'Speculative application'] },
+          { k: 'start', type: 'text', ph: 'e.g. immediately, in 3 months', q: () => 'When could you start?' },
+          { k: 'email', type: 'email', ph: 'Email address', q: (a) => `How can we reach you, ${a.name}?` },
+          { k: 'phone', type: 'tel', ph: 'Phone number (optional)', optional: true, q: () => 'And by phone?' }
+        ]
+      },
+      portfolio: {
+        mailto: 'info@tischlerei-mehlig.de', subject: 'Portfolio request – ', send: 'Request portfolio →',
+        done: 'Your portfolio is reserved — we’ll pack it with care and send it your way as soon as possible.',
+        label: { name: 'Name', street: 'Address', city: 'Post code / town', email: 'Email' },
+        steps: [
+          { k: 'name', type: 'text', ph: 'Your name', eye: 'Portfolio — in 30 seconds', q: () => 'What’s your name?' },
+          { k: 'street', type: 'text', ph: 'Street & number', q: (a) => `Where shall we send it, ${a.name}?` },
+          { k: 'city', type: 'text', ph: 'Post code & town', q: () => 'Post code and town?' },
+          { k: 'email', type: 'email', ph: 'Email address', q: () => 'And your email for confirmation?' }
+        ]
+      }
     }
-  };
+  }[LANG];
 
   $$('[data-funnel]').forEach((funnel) => {
     const cfg = FUNNELS[funnel.dataset.variant] || FUNNELS.contact;
@@ -283,7 +351,7 @@
 
     const bar = document.createElement('div'); bar.className = 'funnel__bar';
     const top = document.createElement('div'); top.className = 'funnel__top';
-    const back = document.createElement('button'); back.className = 'funnel__back'; back.type = 'button'; back.textContent = '‹ zurück';
+    const back = document.createElement('button'); back.className = 'funnel__back'; back.type = 'button'; back.textContent = t.back;
     const counter = document.createElement('span');
     top.append(back, counter);
     const stage = document.createElement('div'); stage.className = 'funnel__stage';
@@ -297,7 +365,7 @@
     function render() {
       setBar();
       back.classList.toggle('show', i > 0);
-      counter.textContent = i < steps.length ? `${i + 1} / ${steps.length}` : 'Fertig';
+      counter.textContent = i < steps.length ? `${i + 1} / ${steps.length}` : t.done;
       stage.innerHTML = '';
       if (i >= steps.length) return renderDone();
       const s = steps[i];
@@ -323,9 +391,9 @@
         if (s.type === 'email') { inp.inputMode = 'email'; inp.autocapitalize = 'off'; inp.setAttribute('autocomplete', 'email'); inp.spellcheck = false; }
 
         const hint = document.createElement('p'); hint.className = 'f-hint';
-        hint.innerHTML = s.optional ? 'Optional · <b>Enter ↵</b>' : 'Drücke <b>Enter ↵</b>';
+        hint.innerHTML = s.optional ? t.optional : t.enter;
         const err = (msg) => { hint.classList.add('err'); hint.textContent = msg; inp.focus(); };
-        const clearErr = () => { if (hint.classList.contains('err')) { hint.classList.remove('err'); hint.innerHTML = s.optional ? 'Optional · <b>Enter ↵</b>' : 'Drücke <b>Enter ↵</b>'; } };
+        const clearErr = () => { if (hint.classList.contains('err')) { hint.classList.remove('err'); hint.innerHTML = s.optional ? t.optional : t.enter; } };
 
         // Telephone: Vorwahl selector + number font + automatic gaps.
         let dial = null, row = null;
@@ -347,21 +415,21 @@
 
         const advance = () => {
           const v = inp.value.trim();
-          if (!v && !s.optional) return err('Bitte gib hier etwas ein.');
+          if (!v && !s.optional) return err(t.empty);
           if (s.type === 'email') {
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return err('Bitte gib eine gültige E-Mail-Adresse ein.');
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return err(t.invalidEmail);
             return commit(v);
           }
           if (isTel) {
             if (!v) return commit('');
-            if (v.replace(/\D/g, '').length < 6) return err('Bitte gib eine gültige Telefonnummer ein.');
+            if (v.replace(/\D/g, '').length < 6) return err(t.invalidPhone);
             return commit(`${dial.value} ${gap(v)}`);
           }
           commit(v);
         };
         inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); advance(); } });
         const act = document.createElement('div'); act.className = 'f-actions';
-        const nx = document.createElement('button'); nx.type = 'button'; nx.className = 'f-next'; nx.dataset.link = ''; nx.textContent = 'Weiter →';
+        const nx = document.createElement('button'); nx.type = 'button'; nx.className = 'f-next'; nx.dataset.link = ''; nx.textContent = t.next;
         nx.addEventListener('click', advance);
         act.appendChild(nx);
         step.append(row || inp, hint, act);
@@ -373,8 +441,8 @@
     function renderDone() {
       bar.style.width = '100%';
       const step = document.createElement('div'); step.className = 'f-step';
-      const e = document.createElement('p'); e.className = 'f-eyebrow'; e.textContent = 'Fast geschafft';
-      const q = document.createElement('h2'); q.className = 'f-q'; q.textContent = `Danke, ${ans.name}.`;
+      const e = document.createElement('p'); e.className = 'f-eyebrow'; e.textContent = t.almost;
+      const q = document.createElement('h2'); q.className = 'f-q'; q.textContent = t.thanks(ans.name);
       const ul = document.createElement('ul'); ul.className = 'f-summary';
       steps.forEach(s => {
         if (!ans[s.k]) return;
@@ -387,22 +455,22 @@
       const mailtoLink = `mailto:${mailto}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
       const act = document.createElement('div'); act.className = 'f-actions';
       const send = document.createElement('button'); send.type = 'button'; send.className = 'f-next'; send.dataset.link = ''; send.textContent = cfg.send;
-      const edit = document.createElement('button'); edit.type = 'button'; edit.className = 'funnel__back show'; edit.style.position = 'static'; edit.style.marginLeft = '1.5rem'; edit.textContent = '‹ ändern';
+      const edit = document.createElement('button'); edit.type = 'button'; edit.className = 'funnel__back show'; edit.style.position = 'static'; edit.style.marginLeft = '1.5rem'; edit.textContent = t.change;
       edit.addEventListener('click', () => { i = 0; render(); });
       const note = document.createElement('p'); note.className = 'f-hint'; note.style.marginTop = '1.2rem';
-      note.innerHTML = `Lieber direkt? <a href="${mailtoLink}" data-link style="color:var(--red);border-bottom:1px solid var(--red)">per E-Mail senden</a>`;
+      note.innerHTML = `${t.directPre}<a href="${mailtoLink}" data-link style="color:var(--red);border-bottom:1px solid var(--red)">${t.directLink}</a>`;
       send.addEventListener('click', async () => {
-        send.disabled = true; const orig = send.textContent; send.textContent = 'Wird gesendet …';
+        send.disabled = true; const orig = send.textContent; send.textContent = t.sending;
         try {
-          const r = await fetch('/api/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ variant: funnel.dataset.variant || 'contact', data: ans, labels: LABEL }) });
+          const r = await fetch('/api/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ variant: funnel.dataset.variant || 'contact', lang: LANG, data: ans, labels: LABEL }) });
           if (!r.ok) throw 0;
           stage.innerHTML = '';
           const ok = document.createElement('div'); ok.className = 'f-step';
-          ok.innerHTML = `<p class="f-eyebrow">Gesendet ✓</p><h2 class="f-q">Danke, ${ans.name}!</h2><p class="f-done">${cfg.done || 'Deine Nachricht ist bei uns angekommen — wir melden uns schnellstmöglich persönlich bei dir.'}</p>`;
+          ok.innerHTML = `<p class="f-eyebrow">${t.sentEye}</p><h2 class="f-q">${t.sentH(ans.name)}</h2><p class="f-done">${cfg.done}</p>`;
           stage.appendChild(ok);
         } catch (_) {
           send.disabled = false; send.textContent = orig;
-          note.innerHTML = `Senden gerade nicht möglich — <a href="${mailtoLink}" data-link style="color:var(--red);border-bottom:1px solid var(--red)">per E-Mail senden</a>`;
+          note.innerHTML = `${t.failPre}<a href="${mailtoLink}" data-link style="color:var(--red);border-bottom:1px solid var(--red)">${t.directLink}</a>`;
           window.location.href = mailtoLink;
         }
       });
@@ -417,6 +485,7 @@
   /* ---------- PROJEKTE FILTER (?ort=) ---------- */
   const pgrid = $('.pgrid');
   if (pgrid) {
+    const PROJ = LANG === 'en' ? 'projekte.en.html' : 'projekte.html';
     const ort = new URLSearchParams(location.search).get('ort');
     const bar = $('[data-filterbar]');
     if (ort) {
@@ -429,8 +498,8 @@
       });
       if (bar) {
         bar.innerHTML = n
-          ? `Projekte in <b>${ort}</b> · ${n} <a href="projekte.html" data-link>Alle Projekte ›</a>`
-          : `Für <b>${ort}</b> zeigen wir Projekte gern auf Anfrage. <a href="projekte.html" data-link>Alle Projekte ›</a>`;
+          ? `${t.filterIn(ort, n)}<a href="${PROJ}" data-link>${t.filterAll}</a>`
+          : `${t.filterNone(ort)}<a href="${PROJ}" data-link>${t.filterAll}</a>`;
         bar.classList.add('show');
       }
     }

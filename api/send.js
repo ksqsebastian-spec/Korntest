@@ -18,44 +18,82 @@ const IMG = process.env.MAIL_IMAGE || 'https://korn-fenster.de/media/pages/home/
 
 const esc = (s) => String(s == null ? '' : s).replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
 
-// Copy per funnel variant.
+// Copy per funnel variant, per language.
 const COPY = {
-  contact: {
-    subject: (name) => `Danke, ${name} — wir melden uns`,
-    notifyLabel: 'Neue Anfrage',
-    intro: `vielen herzlichen Dank — wir freuen uns riesig, dass du dich für die Tischlerei Mehlig entschieden hast. Dein Vertrauen bedeutet uns viel.`,
-    middle: `Wir haben deine Nachricht erhalten und melden uns <b style="color:#141414;">schnellstmöglich persönlich &amp; telefonisch</b> bei dir, um alles Weitere in Ruhe zu besprechen.`,
-    showPortfolioCta: true
+  de: {
+    contact: {
+      subject: (name) => `Danke, ${name} — wir melden uns`,
+      notifyLabel: 'Neue Anfrage',
+      intro: `vielen herzlichen Dank — wir freuen uns riesig, dass du dich für die Tischlerei Mehlig entschieden hast. Dein Vertrauen bedeutet uns viel.`,
+      middle: `Wir haben deine Nachricht erhalten und melden uns <b style="color:#141414;">schnellstmöglich persönlich &amp; telefonisch</b> bei dir, um alles Weitere in Ruhe zu besprechen.`,
+      showPortfolioCta: true
+    },
+    recruit: {
+      subject: (name) => `Danke für deine Bewerbung, ${name}`,
+      notifyLabel: 'Neue Bewerbung',
+      intro: `vielen herzlichen Dank für deine Bewerbung — wir freuen uns riesig, dass du dir die Tischlerei Mehlig als Ort für deinen nächsten Schritt vorstellen kannst. Dein Interesse ehrt uns.`,
+      middle: `Wir sehen uns deine Angaben jetzt in aller Ruhe an und melden uns <b style="color:#141414;">schnellstmöglich ganz persönlich</b> bei dir, um dich kennenzulernen.`,
+      extra: `Bei uns zählt der Mensch hinter der Bewerbung — und wir nehmen uns die Zeit, die du verdienst.`,
+      closing: `Bis dahin: schön, dass du den Weg zu uns gefunden hast.`,
+      showPortfolioCta: false
+    },
+    portfolio: {
+      subject: (name) => `Dein Portfolio ist unterwegs, ${name}`,
+      notifyLabel: 'Portfolio-Anfrage',
+      intro: `vielen herzlichen Dank für deine Anfrage — wir freuen uns riesig, dir unser physisches Portfolio zusenden zu dürfen.`,
+      middle: `Wir verpacken es mit Sorgfalt und bringen es <b style="color:#141414;">schnellstmöglich auf den Weg zu dir</b>. Lass dich von unseren Projekten in Ruhe inspirieren — gedruckt, zum Anfassen.`,
+      showPortfolioCta: false
+    }
   },
-  recruit: {
-    subject: (name) => `Danke für deine Bewerbung, ${name}`,
-    notifyLabel: 'Neue Bewerbung',
-    intro: `vielen herzlichen Dank für deine Bewerbung — wir freuen uns riesig, dass du dir die Tischlerei Mehlig als Ort für deinen nächsten Schritt vorstellen kannst. Dein Interesse ehrt uns.`,
-    middle: `Wir sehen uns deine Angaben jetzt in aller Ruhe an und melden uns <b style="color:#141414;">schnellstmöglich ganz persönlich</b> bei dir, um dich kennenzulernen.`,
-    extra: `Bei uns zählt der Mensch hinter der Bewerbung — und wir nehmen uns die Zeit, die du verdienst.`,
-    closing: `Bis dahin: schön, dass du den Weg zu uns gefunden hast.`,
-    showPortfolioCta: false
-  },
-  portfolio: {
-    subject: (name) => `Dein Portfolio ist unterwegs, ${name}`,
-    notifyLabel: 'Portfolio-Anfrage',
-    intro: `vielen herzlichen Dank für deine Anfrage — wir freuen uns riesig, dir unser physisches Portfolio zusenden zu dürfen.`,
-    middle: `Wir verpacken es mit Sorgfalt und bringen es <b style="color:#141414;">schnellstmöglich auf den Weg zu dir</b>. Lass dich von unseren Projekten in Ruhe inspirieren — gedruckt, zum Anfassen.`,
-    showPortfolioCta: false
+  en: {
+    contact: {
+      subject: (name) => `Thank you, ${name} — we’ll be in touch`,
+      notifyLabel: 'New enquiry',
+      intro: `thank you so much — we’re thrilled that you’ve chosen Tischlerei Mehlig. Your trust means a great deal to us.`,
+      middle: `We’ve received your message and will get back to you <b style="color:#141414;">personally &amp; by phone as soon as possible</b> to discuss everything in peace.`,
+      showPortfolioCta: true
+    },
+    recruit: {
+      subject: (name) => `Thank you for your application, ${name}`,
+      notifyLabel: 'New application',
+      intro: `thank you so much for your application — we’re thrilled that you can picture Tischlerei Mehlig as the place for your next step. We’re honoured by your interest.`,
+      middle: `We’ll now review your details carefully and get back to you <b style="color:#141414;">personally as soon as possible</b> to get to know you.`,
+      extra: `For us, the person behind the application matters — and we’ll take the time you deserve.`,
+      closing: `Until then: lovely that you found your way to us.`,
+      showPortfolioCta: false
+    },
+    portfolio: {
+      subject: (name) => `Your portfolio is on its way, ${name}`,
+      notifyLabel: 'Portfolio request',
+      intro: `thank you so much for your request — we’re delighted to send you our physical portfolio.`,
+      middle: `We’ll pack it with care and get it <b style="color:#141414;">on its way to you as soon as possible</b>. Take your time and be inspired by our projects — in print, to hold.`,
+      showPortfolioCta: false
+    }
   }
 };
 
-function portfolioCta(baseUrl) {
-  if (!baseUrl) return '';
+// Fixed template chrome per language.
+const TPL = {
+  de: { fallbackName: 'und herzlich willkommen', greeting: 'Hallo', closingDefault: 'Bis dahin: schön, dass du da bist.', regards: 'Herzliche Grüße', team: 'dein Team der Tischlerei Mehlig', cta: 'Physisches Portfolio anfragen →', reply: 'Antworten an', notifyName: 'Tischlerei Mehlig' },
+  en: { fallbackName: 'and a warm welcome', greeting: 'Hi', closingDefault: 'Until then: lovely to have you here.', regards: 'Warm regards', team: 'your Tischlerei Mehlig team', cta: 'Request physical portfolio →', reply: 'Reply to', notifyName: 'Tischlerei Mehlig' }
+};
+
+const langOf = (l) => (String(l || 'de').toLowerCase().startsWith('en') ? 'en' : 'de');
+
+function portfolioCta(href, label) {
+  if (!href) return '';
   return `<tr><td style="padding:8px 48px 0;">
       <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="background:#A02615;">
-        <a href="${baseUrl}/portfolio.html" style="display:inline-block;padding:14px 26px;font-family:Arial,Helvetica,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#ffffff;text-decoration:none;">Physisches Portfolio anfragen →</a>
+        <a href="${href}" style="display:inline-block;padding:14px 26px;font-family:Arial,Helvetica,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#ffffff;text-decoration:none;">${label}</a>
       </td></tr></table>
     </td></tr>`;
 }
 
-function customerEmail({ name, variant, baseUrl }) {
-  const c = COPY[variant] || COPY.contact;
+function customerEmail({ name, variant, baseUrl, lang }) {
+  const L = langOf(lang);
+  const c = COPY[L][variant] || COPY[L].contact;
+  const x = TPL[L];
+  const ctaHref = baseUrl ? `${baseUrl}/portfolio${L === 'en' ? '.en' : ''}.html` : '';
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
 <body style="margin:0;padding:0;background:#f1efea;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1efea;padding:32px 0;font-family:Georgia,'Times New Roman',serif;">
@@ -64,18 +102,18 @@ function customerEmail({ name, variant, baseUrl }) {
     <tr><td style="padding:0;"><img src="${IMG}" width="600" alt="" style="display:block;width:100%;height:auto;border:0;"></td></tr>
     <tr><td style="padding:40px 48px 0;">
       <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:4px;color:#A02615;text-transform:uppercase;">Tischlerei Mehlig</div>
-      <div style="font-size:32px;line-height:1.15;color:#141414;margin-top:22px;">Hallo ${esc(name) || 'und herzlich willkommen'},</div>
+      <div style="font-size:32px;line-height:1.15;color:#141414;margin-top:22px;">${x.greeting} ${esc(name) || x.fallbackName},</div>
     </td></tr>
     <tr><td style="padding:20px 48px 0;font-size:17px;line-height:1.7;color:#3a3633;">
       <p style="margin:0 0 16px;">${c.intro}</p>
       <p style="margin:0 0 16px;">${c.middle}</p>
       ${c.extra ? `<p style="margin:0 0 16px;">${c.extra}</p>` : ''}
-      <p style="margin:0 0 4px;">${c.closing || 'Bis dahin: schön, dass du da bist.'}</p>
+      <p style="margin:0 0 4px;">${c.closing || x.closingDefault}</p>
     </td></tr>
-    ${c.showPortfolioCta ? portfolioCta(baseUrl) : ''}
+    ${c.showPortfolioCta ? portfolioCta(ctaHref, x.cta) : ''}
     <tr><td style="padding:26px 48px 44px;">
-      <div style="font-size:18px;color:#141414;">Herzliche Grüße</div>
-      <div style="font-size:18px;color:#A02615;">dein Team der Tischlerei Mehlig</div>
+      <div style="font-size:18px;color:#141414;">${x.regards}</div>
+      <div style="font-size:18px;color:#A02615;">${x.team}</div>
     </td></tr>
     <tr><td style="padding:26px 48px;background:#141414;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.9;letter-spacing:.5px;color:#b9b3ac;">
       <div style="color:#ffffff;font-size:13px;letter-spacing:5px;margin-bottom:6px;">M E H L I G</div>
@@ -86,13 +124,14 @@ function customerEmail({ name, variant, baseUrl }) {
 </td></tr></table></body></html>`;
 }
 
-function internalEmail({ rows, email, notifyLabel, routedNote }) {
+function internalEmail({ rows, email, notifyLabel, routedNote, lang }) {
+  const x = TPL[langOf(lang)];
   const list = rows.map(r => `<tr><td style="padding:6px 0;border-bottom:1px solid #eee;font-size:14px;color:#222;">${esc(r)}</td></tr>`).join('');
   return `<!doctype html><html><body style="margin:0;background:#fff;font-family:Arial,Helvetica,sans-serif;color:#222;">
   <div style="max-width:560px;margin:24px auto;padding:0 16px;">
     <div style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#A02615;">${esc(notifyLabel)} · tischlerei-mehlig.de</div>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;">${list}</table>
-    <p style="margin-top:18px;font-size:14px;">Antworten an: <a href="mailto:${esc(email)}">${esc(email)}</a></p>
+    <p style="margin-top:18px;font-size:14px;">${x.reply}: <a href="mailto:${esc(email)}">${esc(email)}</a></p>
     ${routedNote ? `<p style="margin-top:10px;font-size:12px;color:#999;">${esc(routedNote)}</p>` : ''}
   </div></body></html>`;
 }
@@ -116,7 +155,8 @@ module.exports = async (req, res) => {
 
   const body = await readBody(req);
   const variant = ['contact', 'recruit', 'portfolio'].includes(body.variant) ? body.variant : 'contact';
-  const copy = COPY[variant];
+  const lang = langOf(body.lang);
+  const copy = COPY[lang][variant];
   const data = body.data || {};
   const labels = body.labels || {};
   const name = String(data.name || '').slice(0, 80);
@@ -154,13 +194,13 @@ module.exports = async (req, res) => {
 
   const customer = await send({
     from: FROM, to: customerTo, reply_to: notifyReal,
-    subject: copy.subject(name || 'und herzlich willkommen'),
-    html: customerEmail({ name, variant, baseUrl })
+    subject: copy.subject(name || TPL[lang].fallbackName),
+    html: customerEmail({ name, variant, baseUrl, lang })
   });
   const internalPayload = {
     from: FROM, to: notifyTo,
     subject: `${copy.notifyLabel} – ${name || email || 'Tischlerei Mehlig'}`,
-    html: internalEmail({ rows, email, notifyLabel: copy.notifyLabel, routedNote })
+    html: internalEmail({ rows, email, notifyLabel: copy.notifyLabel, routedNote, lang })
   };
   if (emailValid) internalPayload.reply_to = email;
   const internal = await send(internalPayload);
