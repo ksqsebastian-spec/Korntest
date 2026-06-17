@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KORN — finest windows and doors</title>
+<meta name="description" content="Höchste Fensterkompetenz im exklusiven, internationalen Villenbau für besonders anspruchsvolle Projekte. Seit 1946." />
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ============ CUSTOM CURSOR ============ -->
+<div class="cursor" data-cursor>
+  <div class="cursor__dot"></div>
+  <div class="cursor__ring"></div>
+</div>
+
+<!-- ============ INTRO / LOGO FADE ============ -->
+<div class="intro" data-intro>
+  <div class="intro__inner">
+    <svg class="intro__logo" viewBox="0 0 62 68" aria-label="KORN">
+      <path d="M1.047 33.753h26.129v.973H1.047zM28.538 2.22h.971v30.171h-.971zM28.538 36.085h.971v30.172h-.971zM30.871 33.753h27.78v.973h-27.78zM47.841 26.478c-5.751 0-9.809-4.571-9.809-11.07 0-6.5 4.058-11.069 9.809-11.069 5.753 0 9.849 4.569 9.849 11.069 0 6.499-4.096 11.07-9.849 11.07m0-24.779c-7.682 0-13.157 5.673-13.157 13.709s5.475 13.709 13.157 13.709C55.564 29.116 61 23.443 61 15.408c0-8.036-5.436-13.709-13.159-13.709M1 66.301h3.151V55.783h5.673l7.288 10.518h3.585L12.975 55.31c4.018-.512 6.657-3.544 6.657-7.563 0-4.648-3.545-7.919-8.548-7.919H1v26.473zm3.151-23.912h6.461c3.427 0 5.831 2.245 5.831 5.437 0 3.23-2.405 5.396-5.831 5.396H4.151V42.389zM1 28.864V2.525h3.136v11.406h2.43L18.05 2.487h4.036L9.349 15.303l12.816 13.561h-4.194L6.566 16.675h-2.43v12.189zM55.535 39.925v21.469L40.306 39.925h-3.178v26.376h3.021V44.83l15.229 21.471h3.18V39.925z"/>
+    </svg>
+    <span class="intro__tag">finest windows &amp; doors</span>
+  </div>
+</div>
+
+<!-- ============ HEADER ============ -->
+<header class="header" data-header>
+  <a href="#home" class="header__logo" data-link aria-label="KORN — Start">
+    <svg viewBox="0 0 62 68"><path d="M1.047 33.753h26.129v.973H1.047zM28.538 2.22h.971v30.171h-.971zM28.538 36.085h.971v30.172h-.971zM30.871 33.753h27.78v.973h-27.78zM47.841 26.478c-5.751 0-9.809-4.571-9.809-11.07 0-6.5 4.058-11.069 9.809-11.069 5.753 0 9.849 4.569 9.849 11.069 0 6.499-4.096 11.07-9.849 11.07m0-24.779c-7.682 0-13.157 5.673-13.157 13.709s5.475 13.709 13.157 13.709C55.564 29.116 61 23.443 61 15.408c0-8.036-5.436-13.709-13.159-13.709M1 66.301h3.151V55.783h5.673l7.288 10.518h3.585L12.975 55.31c4.018-.512 6.657-3.544 6.657-7.563 0-4.648-3.545-7.919-8.548-7.919H1v26.473zm3.151-23.912h6.461c3.427 0 5.831 2.245 5.831 5.437 0 3.23-2.405 5.396-5.831 5.396H4.151V42.389zM1 28.864V2.525h3.136v11.406h2.43L18.05 2.487h4.036L9.349 15.303l12.816 13.561h-4.194L6.566 16.675h-2.43v12.189zM55.535 39.925v21.469L40.306 39.925h-3.178v26.376h3.021V44.83l15.229 21.471h3.18V39.925z"/></svg>
+  </a>
+
+  <nav class="header__nav" data-nav>
+    <a href="#produkte" data-link>Produkte</a>
+    <a href="#projekte" data-link>Projekte</a>
+    <a href="#aktuelles" data-link>Aktuelles</a>
+    <a href="#ueber-uns" data-link>Über uns</a>
+    <a href="#karriere" data-link>Karriere</a>
+    <a href="#kontakt" data-link>Kontakt</a>
+  </nav>
+
+  <div class="header__lang">
+    <button class="is-active" data-link>DE</button>
+    <span>/</span>
+    <button data-link>EN</button>
+  </div>
+
+  <button class="header__burger" data-burger aria-label="Menü">
+    <span></span><span></span>
+  </button>
+</header>
+
+<!-- ============ MOBILE MENU ============ -->
+<div class="menu" data-menu>
+  <nav class="menu__nav">
+    <a href="#produkte" data-link>Produkte</a>
+    <a href="#projekte" data-link>Projekte</a>
+    <a href="#aktuelles" data-link>Aktuelles</a>
+    <a href="#ueber-uns" data-link>Über uns</a>
+    <a href="#karriere" data-link>Karriere</a>
+    <a href="#kontakt" data-link>Kontakt</a>
+  </nav>
+</div>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="home">
+  <div class="hero__slides" data-slider>
+    <div class="hero__slide is-active" style="background-image:url('assets/img/hero-lignum-usa.jpg')"></div>
+    <div class="hero__slide" style="background-image:url('assets/img/hero-indigo.jpg')"></div>
+    <div class="hero__slide" style="background-image:url('assets/img/hero-hamburg.jpg')"></div>
+    <div class="hero__slide" style="background-image:url('assets/img/hero-lignum.jpg')"></div>
+    <div class="hero__slide" style="background-image:url('assets/img/hero-airlux.jpg')"></div>
+  </div>
+  <div class="hero__veil"></div>
+
+  <div class="hero__content">
+    <p class="hero__eyebrow" data-reveal>finest windows &amp; doors — seit 1946</p>
+    <blockquote class="hero__quote" data-reveal>
+      <span>»Die Geschichte</span>
+      <span>der Architektur</span>
+      <span>ist die Geschichte</span>
+      <span class="is-accent">des Fensters«</span>
+    </blockquote>
+    <cite class="hero__cite" data-reveal>— Le Corbusier</cite>
+  </div>
+
+  <div class="hero__dots" data-dots></div>
+  <a href="#produkte" class="hero__scroll" data-link aria-label="Weiter">
+    <span></span>
+  </a>
+</section>
+
+<!-- ============ INTRO STATEMENT ============ -->
+<section class="statement">
+  <p class="statement__lead" data-reveal>
+    Beratung, Werkplanung, Produktion, Montage und Service — internationale Fenster- und
+    Türenkompetenz aus einer Hand für den exklusiven Villenbau.
+  </p>
+  <p class="statement__body" data-reveal>
+    KORN steht für höchste Fensterkompetenz im exklusiven, internationalen Villenbau. Architekten
+    und Bauherren wählen aus Produkten mit einzigartigen Funktionsmerkmalen — gefertigt für
+    besonders anspruchsvolle Projekte an jedem Ort der Welt.
+  </p>
+</section>
+
+<!-- ============ PRODUKTE ============ -->
+<section class="section products" id="produkte">
+  <header class="section__head">
+    <span class="section__index" data-reveal>01 — Produkte</span>
+    <h2 class="section__title" data-reveal>Produktlinien</h2>
+  </header>
+
+  <div class="products__grid">
+    <article class="product" data-reveal data-img="assets/img/hero-lignum.jpg">
+      <span class="product__num">L1</span>
+      <h3>KORN LIGNUM</h3>
+      <p>Wohnqualität für Jahrzehnte. Feinste Fenster und Türen aus Holz — über 100 kombinierbare Gestaltungsoptionen, hurricane-geprüft.</p>
+      <span class="product__go">Entdecken</span>
+    </article>
+    <article class="product" data-reveal data-img="assets/img/hero-hamburg.jpg">
+      <span class="product__num">L2</span>
+      <h3>KORN LIGNUM SECURE</h3>
+      <p>Für höchste Ansprüche. Geprüfte Sicherheitsfenster aus Holz — Einbruchhemmung RC2–RC4, Beschusshemmung bis FB6.</p>
+      <span class="product__go">Entdecken</span>
+    </article>
+    <article class="product" data-reveal data-img="assets/img/hero-airlux.jpg">
+      <span class="product__num">A</span>
+      <h3>KORN air-lux</h3>
+      <p>Patentierte Leichtigkeit mit Prüfbestwerten. Die pneumatische Dichtung schützt zu 100 % gegen Regen und Wind — Sicherheit bis RC3.</p>
+      <span class="product__go">Entdecken</span>
+    </article>
+    <article class="product" data-reveal data-img="assets/img/hero-indigo.jpg">
+      <span class="product__num">B</span>
+      <h3>KORN burckhardt&rsquo;s glide</h3>
+      <p>Die Aufhebung von Innen und Außen. Profillose Schiebeflügel, bündig eingelassen — U<sub>w</sub> &lt; 0,8 W/m²K, passivhaustauglich.</p>
+      <span class="product__go">Entdecken</span>
+    </article>
+    <article class="product" data-reveal data-img="assets/img/hero-lignum-usa.jpg">
+      <span class="product__num">M</span>
+      <h3>KORN metal</h3>
+      <p>Gestaltungsfreiheit mit System. Zinkstahl, Corten, Edelstahl oder Messing — schmale Ansichten für neue und historische Architektur.</p>
+      <span class="product__go">Entdecken</span>
+    </article>
+    <article class="product product--wide" data-reveal data-img="assets/img/hero-hamburg.jpg">
+      <span class="product__num">R</span>
+      <h3>KORN retrac system</h3>
+      <p>Fenstertechnik in einer anderen Dimension. Bis zu 6 × 3 m große Fensterfronten verfahren auf Knopfdruck vollständig im Fußboden — kombinierbar mit allen Produktlinien.</p>
+      <span class="product__go">Entdecken</span>
+    </article>
+  </div>
+</section>
+
+<!-- ============ PARALLAX BREAK ============ -->
+<section class="break" aria-hidden="true">
+  <div class="break__img" data-parallax style="background-image:url('assets/img/hero-indigo.jpg')"></div>
+  <p class="break__line" data-reveal>Schönheit und Technologie — in vollendeter Form.</p>
+</section>
+
+<!-- ============ PROJEKTE ============ -->
+<section class="section projects" id="projekte">
+  <header class="section__head">
+    <span class="section__index" data-reveal>02 — Projekte</span>
+    <h2 class="section__title" data-reveal>Ausgewählte Arbeiten</h2>
+  </header>
+
+  <p class="projects__intro" data-reveal>
+    In über vier Jahrzehnten realisiert mit international renommierten Architekten —
+    Robert A. M. Stern, Frank O. Gehry, David Chipperfield, gmp, Hans Kollhoff, Tadao Ando u. v. m.
+  </p>
+
+  <ul class="projects__list" data-reveal>
+    <li><span>Mark P. Finlay Architects</span><em>Greenwich, Connecticut · USA</em></li>
+    <li><span>The Office of Thierry W. Despont</span><em>Palm Beach, Florida · USA</em></li>
+    <li><span>Ike Kligerman Barkley</span><em>New York · USA</em></li>
+    <li><span>Shope Reno Wharton</span><em>Long Island, New York · USA</em></li>
+    <li><span>Werner Sobek</span><em>Ulm · Deutschland</em></li>
+    <li><span>Prof. Hans Kollhoff Architekten</span><em>Berlin-Dahlem · Deutschland</em></li>
+    <li><span>Tadao Ando Architects</span><em>Venedig · Italien</em></li>
+    <li><span>Silvia Gmür Reto Gmür</span><em>Tessin · Schweiz</em></li>
+    <li><span>Randall Stofft Architects</span><em>Captiva, Florida · USA</em></li>
+    <li><span>JP Molyneux Studio</span><em>Moskau · Russland</em></li>
+    <li><span>nps tchoban voss</span><em>Berlin · Deutschland</em></li>
+    <li><span>Gabellini Sheppard</span><em>Hamburg · Deutschland</em></li>
+  </ul>
+</section>
+
+<!-- ============ AKTUELLES ============ -->
+<section class="section news" id="aktuelles">
+  <header class="section__head">
+    <span class="section__index" data-reveal>03 — Aktuelles</span>
+    <h2 class="section__title" data-reveal>Aus dem Hause KORN</h2>
+  </header>
+
+  <div class="news__grid">
+    <article class="news__item" data-reveal>
+      <span class="news__tag">Innovation &amp; Nachhaltigkeit</span>
+      <h3>Projekt 25c — Naples, Florida</h3>
+      <p>Ein weiteres Prestigeobjekt der Superlative: Milliardär Peter Gilgan verwirklicht seine Vorstellungen von Innovation und Nachhaltigkeit.</p>
+    </article>
+    <article class="news__item" data-reveal>
+      <span class="news__tag">LIGNUM SECURE × SIEGENIA</span>
+      <h3>Maßstäbe im Sicherheitsfenster</h3>
+      <p>Nach erfolgreicher RC3/RC4-Zertifizierung setzen wir mit unserem Partner SIEGENIA neue Maßstäbe in der Beschlagtechnik.</p>
+    </article>
+    <article class="news__item" data-reveal>
+      <span class="news__tag">air-lux</span>
+      <h3>Villa am Elbufer</h3>
+      <p>Zwischen Elbe und Elbchaussee trotzt die air-lux-Fassade dank patentierter pneumatischer Dichtung jeder Wetterlage — 100 % Dichtheit.</p>
+    </article>
+    <article class="news__item" data-reveal>
+      <span class="news__tag">Engineering</span>
+      <h3>Eckschieber, je 1.100 kg</h3>
+      <p>Zwei große Eckschieber öffnen den Essbereich zur Sonnenterrasse — elegant und lautlos dank motorischem Antrieb.</p>
+    </article>
+    <article class="news__item" data-reveal>
+      <span class="news__tag">Denkmalschutz</span>
+      <h3>Modernisierung eines Klassikers</h3>
+      <p>Ein denkmalgeschütztes Gebäude — stilvoll modernisiert zur Büro- und Repräsentanz im Einklang mit dem Bestand.</p>
+    </article>
+    <article class="news__item" data-reveal>
+      <span class="news__tag">Jahresrückblick</span>
+      <h3>43 Villenprojekte an der US-Westküste</h3>
+      <p>Ein außergewöhnliches Jahr — allein an der Westküste der USA realisiert. Danke an Kunden, Partner und Lieferanten.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============ ÜBER UNS ============ -->
+<section class="section about" id="ueber-uns">
+  <header class="section__head">
+    <span class="section__index" data-reveal>04 — Über uns</span>
+    <h2 class="section__title" data-reveal>Das perfekte Miteinander von<br/>Schönheit und Technologie</h2>
+  </header>
+
+  <div class="about__grid">
+    <p class="about__lead" data-reveal>
+      Das Familienunternehmen Cornelius Korn wurde 1946 gegründet und ist spezialisiert auf
+      besonders anspruchsvolle Projekte für Architekten und Bauherren mit außergewöhnlichen
+      Anforderungen.
+    </p>
+    <div class="about__text" data-reveal>
+      <p>
+        Erworben hat sich KORN seine führende Stellung als Erfinder innovativer Fenstersysteme —
+        wie der »Sprosse 22«, einer schönen, stilsicheren und hochfunktionalen Fensterkonstruktion,
+        die viele Häuser vor der Kaputtsanierung rettete.
+      </p>
+      <p>
+        Unsere Holzfenster KORN LIGNUM fertigen wir in eigener Produktion auf 5.000 Quadratmetern
+        in Wedel bei Hamburg — im Design wie in der Material- und Verarbeitungsqualität allen
+        Wettbewerbsprodukten überlegen.
+      </p>
+      <blockquote>
+        »Wir wollten immer das Besondere: Gemeinsam mit Architekten etwas Einmaliges schaffen und
+        für jedes Projekt das ideale Mischungsverhältnis von Technologie und Schönheit ausloten.«
+        <cite>Wilhelm Korn — Geschäftsführer</cite>
+      </blockquote>
+    </div>
+  </div>
+
+  <ol class="timeline">
+    <li data-reveal><span>1946</span><p>Gründung der Cornelius Korn GmbH</p></li>
+    <li data-reveal><span>1979</span><p>Wilhelm Korn übernimmt die Geschäftsführung</p></li>
+    <li data-reveal><span>1980</span><p>Entwicklung der renommierten Sprosse 22</p></li>
+    <li data-reveal><span>1985</span><p>Erste Projekte in den USA</p></li>
+    <li data-reveal><span>2004</span><p>Gründung der KORN Windows &amp; Doors GmbH</p></li>
+    <li data-reveal><span>2017</span><p>Erweiterung der Produktion</p></li>
+    <li data-reveal><span>2019</span><p>Einführung der Produktlinie LIGNUM SECURE</p></li>
+  </ol>
+</section>
+
+<!-- ============ KARRIERE ============ -->
+<section class="section career" id="karriere">
+  <header class="section__head">
+    <span class="section__index" data-reveal>05 — Karriere</span>
+    <h2 class="section__title" data-reveal>Arbeiten bei KORN</h2>
+  </header>
+
+  <div class="career__grid">
+    <p class="career__lead" data-reveal>
+      Als Familienunternehmen haben wir unseren gesamten Produktionsprozess als modernes Teamkonzept
+      aufgestellt. Mitarbeiter aus Fertigung, Projektleitung und Kalkulation gestalten Planung und
+      Umsetzung aktiv mit — flache Hierarchien, kurze Wege, starker Zusammenhalt.
+    </p>
+    <div class="career__stats" data-reveal>
+      <div><span>56</span><em>Mitarbeiter*innen</em></div>
+      <div><span>1946</span><em>gegründet</em></div>
+      <div><span>4-Tage</span><em>Woche möglich</em></div>
+      <div><span>31</span><em>Tage Urlaub</em></div>
+    </div>
+  </div>
+
+  <ul class="career__jobs" data-reveal>
+    <li><span>Projektleiter / Arbeitsvorbereiter</span><em>m/w/d</em></li>
+    <li><span>Vertriebler</span><em>m/w/d</em></li>
+    <li><span>Tischler</span><em>m/w/d</em></li>
+    <li><span>Glaser</span><em>m/w/d</em></li>
+  </ul>
+
+  <a href="mailto:wilinski@korn-fenster.de" class="career__apply" data-link data-reveal>Jetzt bewerben →</a>
+</section>
+
+<!-- ============ KONTAKT ============ -->
+<section class="section contact" id="kontakt">
+  <header class="section__head">
+    <span class="section__index" data-reveal>06 — Kontakt</span>
+    <h2 class="section__title" data-reveal>Sprechen wir<br/>über Ihr Projekt.</h2>
+  </header>
+
+  <div class="contact__grid">
+    <address class="contact__card" data-reveal>
+      <span class="contact__label">Hauptsitz</span>
+      <p>KORN<br/>finest windows &amp; doors</p>
+      <p>Von-Linné-Str. 1<br/>22880 Wedel / Hamburg<br/>Germany</p>
+    </address>
+    <div class="contact__card" data-reveal>
+      <span class="contact__label">Direkt</span>
+      <a href="tel:+49410391600" class="contact__big" data-link>+49 (0) 41 03 91 60 – 0</a>
+      <a href="mailto:info@korn-windows.com" class="contact__big" data-link>info@korn-windows.com</a>
+      <a href="https://maps.google.com/?daddr=KORN+Windows+%26+Doors+GmbH" target="_blank" rel="noopener" class="contact__route" data-link>Route planen →</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <svg class="footer__logo" viewBox="0 0 62 68" aria-hidden="true"><path d="M1.047 33.753h26.129v.973H1.047zM28.538 2.22h.971v30.171h-.971zM28.538 36.085h.971v30.172h-.971zM30.871 33.753h27.78v.973h-27.78zM47.841 26.478c-5.751 0-9.809-4.571-9.809-11.07 0-6.5 4.058-11.069 9.809-11.069 5.753 0 9.849 4.569 9.849 11.069 0 6.499-4.096 11.07-9.849 11.07m0-24.779c-7.682 0-13.157 5.673-13.157 13.709s5.475 13.709 13.157 13.709C55.564 29.116 61 23.443 61 15.408c0-8.036-5.436-13.709-13.159-13.709M1 66.301h3.151V55.783h5.673l7.288 10.518h3.585L12.975 55.31c4.018-.512 6.657-3.544 6.657-7.563 0-4.648-3.545-7.919-8.548-7.919H1v26.473zm3.151-23.912h6.461c3.427 0 5.831 2.245 5.831 5.437 0 3.23-2.405 5.396-5.831 5.396H4.151V42.389zM1 28.864V2.525h3.136v11.406h2.43L18.05 2.487h4.036L9.349 15.303l12.816 13.561h-4.194L6.566 16.675h-2.43v12.189zM55.535 39.925v21.469L40.306 39.925h-3.178v26.376h3.021V44.83l15.229 21.471h3.18V39.925z"/></svg>
+  <div class="footer__cols">
+    <nav>
+      <a href="#produkte" data-link>Produkte</a>
+      <a href="#projekte" data-link>Projekte</a>
+      <a href="#aktuelles" data-link>Aktuelles</a>
+      <a href="#ueber-uns" data-link>Über uns</a>
+    </nav>
+    <nav>
+      <a href="#karriere" data-link>Karriere</a>
+      <a href="#kontakt" data-link>Kontakt</a>
+      <a href="#" data-link>Impressum</a>
+      <a href="#" data-link>Datenschutz</a>
+    </nav>
+    <nav>
+      <a href="mailto:info@korn-windows.com" data-link>info@korn-windows.com</a>
+      <a href="tel:+49410391600" data-link>+49 (0) 41 03 91 60 – 0</a>
+    </nav>
+  </div>
+  <p class="footer__base">© <span data-year></span> Cornelius Korn GmbH — finest windows &amp; doors. Wedel / Hamburg, Germany.</p>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
