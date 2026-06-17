@@ -126,7 +126,7 @@
       bubbles.forEach(b => {
         const dot = b.querySelector('.map__dot');
         const t = (Math.log(+dot.dataset.count) - lo) / (hi - lo);   // 0..1 (compressed)
-        const d = Math.round(w * (0.040 + (0.080 - 0.040) * t));
+        const d = Math.round(w * (0.052 + (0.078 - 0.052) * t));
         dot.style.width = d + 'px'; dot.style.height = d + 'px';
         dot.style.fontSize = Math.max(10, Math.round(d * 0.27)) + 'px';
       });
