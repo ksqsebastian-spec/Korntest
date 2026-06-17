@@ -53,15 +53,19 @@
     window.addEventListener('mouseup', () => cursor.classList.remove('is-down'));
   }
 
-  /* ---------- HEADER ---------- */
-  const header = $('[data-header]');
-  if (header) {
-    if (!$('.hero')) header.classList.add('is-solid');
-    else {
-      const onScroll = () => header.classList.toggle('is-solid', window.scrollY > window.innerHeight * .7);
-      window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
-    }
-  }
+  /* ---------- NAV (theme + hide-on-scroll) ---------- */
+  const hasHero = !!$('.hero');
+  const topnav = $('[data-topnav]');
+  if (!hasHero) document.body.classList.add('nav-dark');
+  let lastY = 0;
+  const onScroll = () => {
+    const y = window.scrollY;
+    if (hasHero) document.body.classList.toggle('nav-dark', y > window.innerHeight * .7);
+    if (topnav) topnav.classList.toggle('is-hidden', y > 140 && y > lastY);
+    lastY = y;
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
   /* ---------- MOBILE MENU ---------- */
   const burger = $('[data-burger]');
