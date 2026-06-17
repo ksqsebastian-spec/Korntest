@@ -13,7 +13,7 @@
 const FROM = process.env.RESEND_FROM || 'KORN — finest windows & doors <onboarding@resend.dev>';
 const NOTIFY_CONTACT = process.env.NOTIFY_CONTACT || 'info@korn-windows.com';
 const NOTIFY_RECRUIT = process.env.NOTIFY_RECRUIT || 'wilinski@korn-fenster.de';
-const TEST_EMAIL = process.env.TEST_EMAIL || '';
+const POC_TEST_TO = 'ksqsebastian@googlemail.com'; // POC: deliver here until a Resend domain is verified (then set RESEND_FROM)
 const IMG = process.env.MAIL_IMAGE || 'https://korn-fenster.de/media/pages/home/fd4dc234e0-1758639882/korn_lignum_usa.jpg';
 
 const esc = (s) => String(s == null ? '' : s).replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
@@ -90,11 +90,13 @@ module.exports = async (req, res) => {
   if (!/.+@.+\..+/.test(email)) { res.status(400).json({ error: 'invalid email' }); return; }
 
   const notifyReal = isRecruit ? NOTIFY_RECRUIT : NOTIFY_CONTACT;
-  // While no domain is verified, Resend only delivers to your account address.
-  // Set TEST_EMAIL to route everything there so the flow works end-to-end.
-  const customerTo = TEST_EMAIL || email;
-  const notifyTo = TEST_EMAIL || notifyReal;
-  const routedNote = TEST_EMAIL ? `Testmodus: alle Mails an ${TEST_EMAIL} (Kunde: ${email}).` : '';
+  // Resend only delivers to your own address until a domain is verified.
+  // Until RESEND_FROM (a verified-domain sender) is set, route ALL mail to the
+  // test inbox so the flow works end-to-end; afterwards it goes to real recipients.
+  const routeTo = process.env.TEST_EMAIL || (process.env.RESEND_FROM ? '' : POC_TEST_TO);
+  const customerTo = routeTo || email;
+  const notifyTo = routeTo || notifyReal;
+  const routedNote = routeTo ? `Testmodus: alle Mails an ${routeTo} (Kunde: ${email}).` : '';
   const rows = Object.keys(labels).map(k => (data[k] ? `${labels[k]}: ${data[k]}` : null)).filter(Boolean);
 
   const send = async (payload) => {
