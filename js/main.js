@@ -113,6 +113,38 @@
         b.addEventListener('mouseleave', () => path.classList.remove('is-hot'));
       });
     }
+    // hover: country highlight + dim others + dossier
+    const dossier = $('[data-dossier]', map);
+    const hi = $$('.map__cty', map);
+    const bubbles = $$('.map__bubble', map);
+    bubbles.forEach(b => {
+      b.addEventListener('mouseenter', () => {
+        const c = b.dataset.c;
+        hi.forEach(h => h.classList.toggle('on', h.dataset.c === c));
+        bubbles.forEach(x => { if (x !== b) x.classList.add('dim'); });
+        if (b._arc) b._arc.classList.add('is-hot');
+        if (dossier) {
+          const num = b.querySelector('.map__dot').dataset.count;
+          const label = (b.getAttribute('aria-label') || '').split(' — ')[0];
+          const arch = (b.dataset.arch || '').split(';').filter(Boolean);
+          const list = arch.length
+            ? '<ul>' + arch.map(a => `<li>${a}</li>`).join('') + '</ul>'
+            : '<ul><li>Projekte weltweit — auf Anfrage</li></ul>';
+          dossier.innerHTML = `<p class="map__dossier__k">${label}</p><p class="map__dossier__n">${num} <small>Projekte</small></p>${list}<p class="map__dossier__go">Projekte ansehen →</p>`;
+          const lx = parseFloat(b.style.left), ty = parseFloat(b.style.top);
+          dossier.style.left = lx + '%'; dossier.style.top = ty + '%';
+          dossier.style.transform = lx > 55 ? 'translate(calc(-100% - 30px),-50%)' : 'translate(30px,-50%)';
+          dossier.classList.add('show');
+        }
+      });
+      b.addEventListener('mouseleave', () => {
+        hi.forEach(h => h.classList.remove('on'));
+        bubbles.forEach(x => x.classList.remove('dim'));
+        if (b._arc) b._arc.classList.remove('is-hot');
+        if (dossier) dossier.classList.remove('show');
+      });
+    });
+
     const mio = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (!e.isIntersecting) return;
@@ -281,6 +313,28 @@
     }
 
     render();
+  }
+
+  /* ---------- PROJEKTE FILTER (?ort=) ---------- */
+  const pgrid = $('.pgrid');
+  if (pgrid) {
+    const ort = new URLSearchParams(location.search).get('ort');
+    const bar = $('[data-filterbar]');
+    if (ort) {
+      const q = ort.toLowerCase();
+      let n = 0;
+      $$('.pcard', pgrid).forEach(c => {
+        const hit = c.textContent.toLowerCase().includes(q);
+        c.style.display = hit ? '' : 'none';
+        if (hit) n++;
+      });
+      if (bar) {
+        bar.innerHTML = n
+          ? `Projekte in <b>${ort}</b> · ${n} <a href="projekte.html" data-link>Alle Projekte ›</a>`
+          : `Für <b>${ort}</b> zeigen wir Projekte gern auf Anfrage. <a href="projekte.html" data-link>Alle Projekte ›</a>`;
+        bar.classList.add('show');
+      }
+    }
   }
 
   /* ---------- YEAR ---------- */
