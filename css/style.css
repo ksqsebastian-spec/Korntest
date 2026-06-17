@@ -197,17 +197,12 @@ body.menu-open .menu__nav a:nth-child(6){transition-delay:.46s}
 .filterbar a{margin-left:1.1rem;color:var(--ink);border-bottom:1px solid var(--line);transition:color .3s}
 .filterbar a:hover{color:var(--red)}
 .map__stage{position:relative;max-width:1100px;margin:0 auto;aspect-ratio:470/340}
-/* dot-matrix continents (svg silhouette masks a dot grid) */
-.map__world{position:absolute;inset:0;width:100%;height:100%;
-  background-image:radial-gradient(circle, #cbc7c0 1.1px, transparent 1.7px);
-  background-size:7px 7px;background-position:0 0;
-  -webkit-mask:url(../assets/world-atlantic.svg) no-repeat center/contain;
-  mask:url(../assets/world-atlantic.svg) no-repeat center/contain}
+/* dot-matrix continents (dot pattern baked into the SVG, loaded as img) */
+.map__world{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 /* per-country highlight layers (red dots, revealed on bubble hover) */
 .map__hi{position:absolute;inset:0;pointer-events:none}
-.map__cty{position:absolute;inset:0;background-image:radial-gradient(circle, var(--red) 1.3px, transparent 1.9px);
-  background-size:7px 7px;background-position:0 0;opacity:0;transition:opacity .45s var(--ease)}
-.map__cty.on{opacity:.9}
+.map__cty{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .45s var(--ease)}
+.map__cty.on{opacity:1}
 /* advanced map: arcs from HQ + HQ marker + ping + hover */
 .map__arcs{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
 .map__arcs path{fill:none;stroke:var(--red);stroke-width:1;vector-effect:non-scaling-stroke;opacity:.22;transition:opacity .4s,stroke-width .4s}
