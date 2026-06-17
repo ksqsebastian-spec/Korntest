@@ -418,9 +418,9 @@ body.menu-open .menu__nav a:nth-child(6){transition-delay:.46s}
 .apply p{font-family:'Cormorant Garamond',serif;font-size:1.25rem;line-height:1.6;color:#3a3633;max-width:48ch;margin-bottom:1.4rem}
 
 /* ---------------- KONTAKT + FUNNEL ---------------- */
-.kontakt{padding:clamp(7rem,15vh,10rem) var(--pad) clamp(4rem,10vh,7rem);display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(2.5rem,7vw,6rem);align-items:start}
-.kontakt__info{font-size:1.05rem;line-height:1.7;color:var(--ink)}
-.kontakt__info .k-name{font-family:'Cormorant Garamond',serif;font-size:1.7rem;margin-bottom:1.4rem}
+.kontakt{padding:clamp(10rem,22vh,14rem) var(--pad) clamp(4rem,10vh,7rem);display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(2.5rem,7vw,6rem);align-items:start}
+.kontakt__info{font-style:normal;font-family:'Cormorant Garamond',serif;font-size:1.3rem;line-height:1.7;color:var(--ink)}
+.kontakt__info .k-name{font-size:1.9rem;margin-bottom:1.4rem}
 .kontakt__info p{margin-bottom:1.4rem}
 .kontakt__info .k-row span{display:inline-block;width:1.5em;color:var(--mut)}
 .kontakt__info a.uline{border-bottom:1px solid var(--line);transition:color .3s,border-color .3s}
