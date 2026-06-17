@@ -315,13 +315,48 @@
         });
         step.appendChild(wrap);
       } else {
+        const isTel = s.type === 'tel';
         const inp = document.createElement('input');
-        inp.className = 'f-input'; inp.type = s.type === 'email' ? 'text' : 'text';
+        inp.className = 'f-input' + (isTel ? ' f-input--num' : '');
+        inp.type = 'text';
         inp.placeholder = s.ph; inp.value = ans[s.k] || '';
-        const hint = document.createElement('p'); hint.className = 'f-hint'; hint.innerHTML = s.optional ? 'Optional · <b>Enter ↵</b>' : 'Drücke <b>Enter ↵</b>';
+        if (s.type === 'email') { inp.inputMode = 'email'; inp.autocapitalize = 'off'; inp.setAttribute('autocomplete', 'email'); inp.spellcheck = false; }
+
+        const hint = document.createElement('p'); hint.className = 'f-hint';
+        hint.innerHTML = s.optional ? 'Optional · <b>Enter ↵</b>' : 'Drücke <b>Enter ↵</b>';
+        const err = (msg) => { hint.classList.add('err'); hint.textContent = msg; inp.focus(); };
+        const clearErr = () => { if (hint.classList.contains('err')) { hint.classList.remove('err'); hint.innerHTML = s.optional ? 'Optional · <b>Enter ↵</b>' : 'Drücke <b>Enter ↵</b>'; } };
+
+        // Telephone: Vorwahl selector + number font + automatic gaps.
+        let dial = null, row = null;
+        const DIALS = ['+49', '+41', '+43', '+1', '+44', '+33', '+39', '+34', '+31', '+7', '+377', '+971'];
+        const gap = (val) => val.replace(/\D/g, '').replace(/(\d{3})(?=\d)/g, '$1 ').trim();
+        if (isTel) {
+          inp.inputMode = 'tel'; inp.setAttribute('autocomplete', 'tel-national');
+          dial = document.createElement('select');
+          dial.className = 'f-dial f-input--num';
+          DIALS.forEach(d => { const o = document.createElement('option'); o.value = d; o.textContent = d; dial.appendChild(o); });
+          const prev = ans[s.k] && ans[s.k].match(/^(\+\d+)\s/); if (prev && DIALS.includes(prev[1])) dial.value = prev[1];
+          if (prev) inp.value = ans[s.k].slice(prev[0].length);
+          inp.addEventListener('input', () => { const p = inp.selectionStart, before = inp.value.length; inp.value = gap(inp.value); inp.selectionStart = inp.selectionEnd = p + (inp.value.length - before); clearErr(); });
+          row = document.createElement('div'); row.className = 'f-telrow';
+          row.append(dial, inp);
+        } else {
+          inp.addEventListener('input', clearErr);
+        }
+
         const advance = () => {
           const v = inp.value.trim();
-          if (!v && !s.optional) { hint.classList.add('err'); hint.textContent = 'Bitte gib hier etwas ein.'; inp.focus(); return; }
+          if (!v && !s.optional) return err('Bitte gib hier etwas ein.');
+          if (s.type === 'email') {
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return err('Bitte gib eine gültige E-Mail-Adresse ein.');
+            return commit(v);
+          }
+          if (isTel) {
+            if (!v) return commit('');
+            if (v.replace(/\D/g, '').length < 6) return err('Bitte gib eine gültige Telefonnummer ein.');
+            return commit(`${dial.value} ${gap(v)}`);
+          }
           commit(v);
         };
         inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); advance(); } });
@@ -329,7 +364,7 @@
         const nx = document.createElement('button'); nx.type = 'button'; nx.className = 'f-next'; nx.dataset.link = ''; nx.textContent = 'Weiter →';
         nx.addEventListener('click', advance);
         act.appendChild(nx);
-        step.append(inp, hint, act);
+        step.append(row || inp, hint, act);
         requestAnimationFrame(() => inp.focus({ preventScroll: true }));
       }
       stage.appendChild(step);

@@ -473,6 +473,11 @@ a.map__bubble{text-decoration:none;color:inherit}
 .f-input{width:100%;border:none;border-bottom:1px solid var(--line);background:none;font-family:'Cormorant Garamond',serif;font-size:clamp(1.4rem,2.4vw,2.1rem);padding:.45rem 0;color:var(--ink);outline:none;transition:border-color .35s}
 .f-input::placeholder{color:#c4bfb8}
 .f-input:focus{border-color:var(--red)}
+.f-input--num{font-family:'Playfair Display',Georgia,serif;font-variant-numeric:lining-nums tabular-nums;letter-spacing:.02em}
+.f-telrow{display:flex;align-items:flex-end;gap:1rem}
+.f-dial{flex:0 0 auto;cursor:none;border:none;border-bottom:1px solid var(--line);background:none;font-size:clamp(1.4rem,2.4vw,2.1rem);color:var(--ink);padding:.45rem 1.4rem .45rem 0;outline:none;transition:border-color .35s;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23A02615'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .3rem center}
+.f-dial:focus{border-color:var(--red)}
+.f-telrow .f-input{flex:1 1 auto}
 .f-hint{margin-top:1.1rem;font-size:.74rem;letter-spacing:.06em;color:var(--mut);transition:color .3s}
 .f-hint.err{color:var(--red)}
 .f-hint b{color:var(--red);font-weight:400}
