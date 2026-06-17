@@ -1,17 +1,19 @@
 // Vercel Serverless Function — sends a designed confirmation email to the
 // visitor (via Resend) plus an internal notification. Key stays server-side.
 //
-// Required env var (set in Vercel → Settings → Environment Variables):
-//   RESEND_API_KEY   your Resend API key
-// Optional:
-//   RESEND_FROM      e.g. "KORN <hallo@korn-windows.com>" (needs a verified domain)
-//   NOTIFY_CONTACT   inbox for project enquiries  (default info@korn-windows.com)
-//   NOTIFY_RECRUIT   inbox for applications        (default wilinski@korn-fenster.de)
-//   MAIL_IMAGE       hero image URL for the email
+// Env vars (Vercel → Settings → Environment Variables):
+//   RESEND_API_KEY   (required) your Resend API key
+//   TEST_EMAIL       (optional) while no domain is verified, route ALL mail here
+//                    (must be your Resend account address, e.g. ksqsebastian@googlemail.com)
+//   RESEND_FROM      (optional) e.g. "KORN <hallo@korn-windows.com>" — needs a verified domain
+//   NOTIFY_CONTACT   (optional) inbox for enquiries   (default info@korn-windows.com)
+//   NOTIFY_RECRUIT   (optional) inbox for applications (default wilinski@korn-fenster.de)
+//   MAIL_IMAGE       (optional) hero image URL for the email
 
 const FROM = process.env.RESEND_FROM || 'KORN — finest windows & doors <onboarding@resend.dev>';
 const NOTIFY_CONTACT = process.env.NOTIFY_CONTACT || 'info@korn-windows.com';
 const NOTIFY_RECRUIT = process.env.NOTIFY_RECRUIT || 'wilinski@korn-fenster.de';
+const TEST_EMAIL = process.env.TEST_EMAIL || '';
 const IMG = process.env.MAIL_IMAGE || 'https://korn-fenster.de/media/pages/home/fd4dc234e0-1758639882/korn_lignum_usa.jpg';
 
 const esc = (s) => String(s == null ? '' : s).replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
@@ -51,14 +53,27 @@ function customerEmail({ name, isRecruit }) {
 </td></tr></table></body></html>`;
 }
 
-function internalEmail({ rows, email, isRecruit }) {
+function internalEmail({ rows, email, isRecruit, routedNote }) {
   const list = rows.map(r => `<tr><td style="padding:6px 0;border-bottom:1px solid #eee;font-size:14px;color:#222;">${esc(r)}</td></tr>`).join('');
   return `<!doctype html><html><body style="margin:0;background:#fff;font-family:Arial,Helvetica,sans-serif;color:#222;">
   <div style="max-width:560px;margin:24px auto;padding:0 16px;">
     <div style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#A02615;">${isRecruit ? 'Neue Bewerbung' : 'Neue Anfrage'} · korn-fenster.de</div>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;">${list}</table>
     <p style="margin-top:18px;font-size:14px;">Antworten an: <a href="mailto:${esc(email)}">${esc(email)}</a></p>
+    ${routedNote ? `<p style="margin-top:10px;font-size:12px;color:#999;">${esc(routedNote)}</p>` : ''}
   </div></body></html>`;
+}
+
+async function readBody(req) {
+  if (req.body && typeof req.body === 'object') return req.body;
+  let raw = req.body;
+  if (raw === undefined || raw === null) {
+    raw = await new Promise((resolve) => {
+      let d = ''; req.on('data', c => (d += c)); req.on('end', () => resolve(d)); req.on('error', () => resolve(''));
+    });
+  }
+  if (typeof raw === 'string') { try { return JSON.parse(raw || '{}'); } catch (_) { return {}; } }
+  return raw || {};
 }
 
 module.exports = async (req, res) => {
@@ -66,10 +81,7 @@ module.exports = async (req, res) => {
   const key = process.env.RESEND_API_KEY;
   if (!key) { res.status(500).json({ error: 'RESEND_API_KEY not configured' }); return; }
 
-  let body = req.body;
-  try { if (typeof body === 'string') body = JSON.parse(body || '{}'); } catch (_) { body = {}; }
-  body = body || {};
-
+  const body = await readBody(req);
   const isRecruit = body.variant === 'recruit';
   const data = body.data || {};
   const labels = body.labels || {};
@@ -77,35 +89,41 @@ module.exports = async (req, res) => {
   const email = String(data.email || '').trim();
   if (!/.+@.+\..+/.test(email)) { res.status(400).json({ error: 'invalid email' }); return; }
 
-  const notify = isRecruit ? NOTIFY_RECRUIT : NOTIFY_CONTACT;
+  const notifyReal = isRecruit ? NOTIFY_RECRUIT : NOTIFY_CONTACT;
+  // While no domain is verified, Resend only delivers to your account address.
+  // Set TEST_EMAIL to route everything there so the flow works end-to-end.
+  const customerTo = TEST_EMAIL || email;
+  const notifyTo = TEST_EMAIL || notifyReal;
+  const routedNote = TEST_EMAIL ? `Testmodus: alle Mails an ${TEST_EMAIL} (Kunde: ${email}).` : '';
   const rows = Object.keys(labels).map(k => (data[k] ? `${labels[k]}: ${data[k]}` : null)).filter(Boolean);
 
-  const send = (payload) => fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+  const send = async (payload) => {
+    try {
+      const r = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const t = await r.text();
+      return { ok: r.ok, status: r.status, body: t };
+    } catch (e) { return { ok: false, status: 0, body: String(e) }; }
+  };
+
+  const customer = await send({
+    from: FROM, to: customerTo, reply_to: notifyReal,
+    subject: isRecruit ? `Danke für deine Bewerbung, ${name}` : `Danke, ${name} — wir melden uns`,
+    html: customerEmail({ name, isRecruit })
+  });
+  const internal = await send({
+    from: FROM, to: notifyTo, reply_to: email,
+    subject: `${isRecruit ? 'Neue Bewerbung' : 'Neue Anfrage'} – ${name || email}`,
+    html: internalEmail({ rows, email, isRecruit, routedNote })
   });
 
-  try {
-    const customer = await send({
-      from: FROM, to: email, reply_to: notify,
-      subject: isRecruit ? `Danke für deine Bewerbung, ${name}` : `Danke, ${name} — wir melden uns`,
-      html: customerEmail({ name, isRecruit })
-    });
-    // internal notification (best-effort)
-    await send({
-      from: FROM, to: notify, reply_to: email,
-      subject: `${isRecruit ? 'Neue Bewerbung' : 'Neue Anfrage'} – ${name || email}`,
-      html: internalEmail({ rows, email, isRecruit })
-    }).catch(() => {});
-
-    if (!customer.ok) {
-      const detail = await customer.text().catch(() => '');
-      res.status(502).json({ error: 'send_failed', detail });
-      return;
-    }
-    res.status(200).json({ ok: true });
-  } catch (e) {
-    res.status(500).json({ error: String(e) });
+  if (customer.ok || internal.ok) {
+    res.status(200).json({ ok: true, customer: customer.ok, internal: internal.ok });
+  } else {
+    console.error('resend failed', { customer, internal });
+    res.status(502).json({ error: 'send_failed', customer, internal });
   }
 };
