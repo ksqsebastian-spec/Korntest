@@ -9,7 +9,7 @@
 
   /* ---------- I18N ---------- */
   const LANG = (document.documentElement.lang || 'de').toLowerCase().startsWith('en') ? 'en' : 'de';
-  const T = {
+  const t = {
     de: {
       enter: 'Drücke <b>Enter ↵</b>', optional: 'Optional · <b>Enter ↵</b>',
       empty: 'Bitte gib hier etwas ein.', invalidEmail: 'Bitte gib eine gültige E-Mail-Adresse ein.',
