@@ -117,6 +117,22 @@
     const dossier = $('[data-dossier]', map);
     const hi = $$('.map__cty', map);
     const bubbles = $$('.map__bubble', map);
+    // dynamic, compressed (log) bubble sizing — relative to stage width, responsive
+    const mstage = $('[data-mapstage]', map) || map;
+    const sizeBubbles = () => {
+      const w = mstage.clientWidth || 1000;
+      const cs = bubbles.map(b => +b.querySelector('.map__dot').dataset.count);
+      const lo = Math.log(Math.min(...cs)), hi = Math.log(Math.max(...cs));
+      bubbles.forEach(b => {
+        const dot = b.querySelector('.map__dot');
+        const t = (Math.log(+dot.dataset.count) - lo) / (hi - lo);   // 0..1 (compressed)
+        const d = Math.round(w * (0.040 + (0.080 - 0.040) * t));
+        dot.style.width = d + 'px'; dot.style.height = d + 'px';
+        dot.style.fontSize = Math.max(10, Math.round(d * 0.27)) + 'px';
+      });
+    };
+    sizeBubbles();
+    window.addEventListener('resize', sizeBubbles, { passive: true });
     bubbles.forEach(b => {
       b.addEventListener('mouseenter', () => {
         const c = b.dataset.c;
