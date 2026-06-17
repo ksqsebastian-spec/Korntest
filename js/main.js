@@ -39,18 +39,14 @@
     revealHero();
   }
 
-  /* ---------- CUSTOM CURSOR ---------- */
+  /* ---------- CUSTOM CURSOR (simple dot) ---------- */
   const cursor = $('[data-cursor]');
   if (cursor && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
-    const dot = $('.cursor__dot', cursor), ring = $('.cursor__ring', cursor);
-    let mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my;
-    window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; dot.style.left = mx + 'px'; dot.style.top = my + 'px'; }, { passive: true });
-    (function loop() { rx += (mx - rx) * .18; ry += (my - ry) * .18; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(loop); })();
-    const sel = 'a, button, [data-link], .product, .projects__list li, .jobs li, summary, .gallery figure';
+    const dot = $('.cursor__dot', cursor);
+    window.addEventListener('mousemove', (e) => { dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px'; }, { passive: true });
+    const sel = 'a, button, [data-link], summary, .pcard, .map__bubble';
     document.addEventListener('mouseover', e => { if (e.target.closest(sel)) cursor.classList.add('is-hover'); });
     document.addEventListener('mouseout', e => { if (e.target.closest(sel)) cursor.classList.remove('is-hover'); });
-    window.addEventListener('mousedown', () => cursor.classList.add('is-down'));
-    window.addEventListener('mouseup', () => cursor.classList.remove('is-down'));
   }
 
   /* ---------- NAV (theme + hide-on-scroll) ---------- */
@@ -100,23 +96,53 @@
   /* ---------- WORLD MAP (bubbles + count-up) ---------- */
   const map = $('[data-map]');
   if (map) {
+    const pct = (s) => parseFloat(s) || 0;
+    // build great-circle-style arcs from HQ to each bubble
+    const arcsSvg = $('[data-arcs]', map), hq = $('[data-hq]', map);
+    if (arcsSvg && hq) {
+      const hx = pct(hq.style.left), hy = pct(hq.style.top);
+      $$('.map__bubble', map).forEach(b => {
+        const bx = pct(b.style.left), by = pct(b.style.top);
+        if (Math.hypot(bx - hx, by - hy) < 8) return; // skip bubbles at HQ (Deutschland)
+        const cx = (hx + bx) / 2, cy = Math.min(hy, by) - Math.abs(bx - hx) * 0.16 - 5;
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', `M${hx} ${hy} Q${cx} ${cy} ${bx} ${by}`);
+        arcsSvg.appendChild(path);
+        b._arc = path;
+        b.addEventListener('mouseenter', () => path.classList.add('is-hot'));
+        b.addEventListener('mouseleave', () => path.classList.remove('is-hot'));
+      });
+    }
     const mio = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (!e.isIntersecting) return;
         map.classList.add('is-in');
+        // count-up numbers
         $$('.map__dot', map).forEach(d => {
           const target = +d.dataset.count; if (!target) return;
           if (reduce) { d.textContent = target; return; }
-          const dur = 1400, t0 = performance.now();
+          const dur = 1500, t0 = performance.now();
           (function tick(now) {
             const p = Math.min((now - t0) / dur, 1);
             d.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
             if (p < 1) requestAnimationFrame(tick);
           })(t0);
         });
+        // draw arcs in (staggered)
+        if (arcsSvg && !reduce) {
+          $$('path', arcsSvg).forEach((p, i) => {
+            const len = p.getTotalLength();
+            p.style.strokeDasharray = len; p.style.strokeDashoffset = len;
+            p.style.transition = 'none';
+            requestAnimationFrame(() => {
+              p.style.transition = `stroke-dashoffset 1.4s ${0.3 + i * 0.12}s cubic-bezier(.22,1,.36,1)`;
+              p.style.strokeDashoffset = '0';
+            });
+          });
+        }
         mio.disconnect();
       });
-    }, { threshold: 0.25 });
+    }, { threshold: 0.2 });
     mio.observe(map);
   }
 
