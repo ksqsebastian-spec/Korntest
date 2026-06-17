@@ -65,10 +65,12 @@ a{color:inherit;text-decoration:none}
 /* ---------------- BRAND + TOP-RIGHT NAV (no bar) ---------------- */
 body{--nav:#fff}
 body.nav-dark{--nav:var(--ink)}
-.brand{position:fixed;top:1.6rem;left:var(--pad);z-index:1000}
-.brand svg{width:40px;height:auto;fill:var(--nav);transition:fill .55s var(--ease),transform .55s var(--ease)}
+.brand{position:fixed;top:1.2rem;left:50%;transform:translateX(-50%);z-index:1000}
+.brand svg{width:42px;height:auto;fill:var(--nav);transition:fill .55s var(--ease),transform .55s var(--ease)}
 .brand:hover svg{transform:scale(1.07)}
 body.nav-dark .brand svg{fill:var(--red)}
+.tagline{position:fixed;top:1.75rem;left:var(--pad);z-index:1000;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.95rem;letter-spacing:.02em;color:var(--nav);transition:color .55s var(--ease)}
+body.nav-dark .tagline{color:var(--red)}
 
 .topnav{position:fixed;top:1.5rem;right:var(--pad);z-index:1000;display:flex;flex-direction:column;align-items:flex-end;gap:.62rem;transition:transform .55s var(--ease),opacity .55s var(--ease)}
 .topnav.is-hidden{transform:translateY(-130%);opacity:0;pointer-events:none}
@@ -292,6 +294,57 @@ body.menu-open .menu__nav a:nth-child(6){transition-delay:.46s}
 .footer__base{font-size:.74rem;letter-spacing:.08em;color:var(--mut);opacity:.75}
 @media (max-width:680px){.footer__nav{align-items:flex-start;text-align:left}}
 
+/* ---------------- PROJEKTE LIST (faithful) ---------------- */
+.proj-wrap{overflow:hidden;padding:clamp(7rem,15vh,10rem) var(--pad) clamp(4rem,10vh,7rem)}
+.sort{float:left;width:23%}
+.sort__title{font-size:.74rem;letter-spacing:.28em;text-transform:uppercase;color:var(--red);margin-bottom:2rem}
+.sort ul{list-style:none;display:flex;flex-direction:column;gap:1.15rem}
+.sort li.is-gap{height:.6rem;border-bottom:1px solid var(--line);margin:.4rem 0}
+.sort a{font-size:1rem;color:var(--ink);transition:color .35s;display:inline-flex;gap:.4em;align-items:baseline}
+.sort a:hover{color:var(--red)}
+.sort em{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;line-height:1}
+.sort .airlux{font-weight:600;font-style:normal;font-family:'Jost',sans-serif;font-size:.95rem}
+.sort__all{color:var(--red)!important}
+.sort__retrac{display:flex;justify-content:space-between;align-items:baseline;gap:1rem}
+
+.pgrid{font-size:0}
+.pcard{display:inline-block;vertical-align:top;width:30%;margin:0 3% clamp(2rem,4vh,3.2rem) 0}
+.pcard__img{position:relative;overflow:hidden;aspect-ratio:4/3;background:var(--paper-2)}
+.pcard__img img{width:100%;height:100%;object-fit:cover;transition:transform 1.1s var(--ease)}
+.pcard:hover .pcard__img img{transform:scale(1.05)}
+.pcard__cap{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;padding:.85rem .2rem 0;font-size:.78rem;line-height:1.5;letter-spacing:.02em;color:var(--mut)}
+.pcard__cap b{font-weight:300;color:var(--ink)}
+.pcard__arrow{font-style:normal;font-size:1.1rem;color:var(--mut);transition:color .35s,transform .35s var(--ease)}
+.pcard:hover .pcard__arrow{color:var(--red);transform:translateX(4px)}
+.pcard:hover .pcard__cap b{color:var(--red)}
+
+/* ---------------- PROJECT DETAIL (faithful) ---------------- */
+.detail{padding:clamp(7rem,15vh,10rem) var(--pad) 0}
+.detail__hero{max-width:900px;margin:0 auto}
+.detail__hero img{width:100%;height:auto}
+.detail__body{max-width:680px;margin:clamp(3rem,7vh,5rem) auto;}
+.detail__title{font-size:clamp(1.5rem,3vw,2.1rem);letter-spacing:.12em;text-transform:uppercase;font-weight:500;margin-bottom:1.2rem}
+.detail__meta{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;color:var(--mut);margin-bottom:2rem;display:flex;gap:2.5rem;flex-wrap:wrap}
+.detail__body p{margin-bottom:1.3rem;color:#3a3633}
+.detail__body ul{list-style:none;margin-bottom:1.3rem}
+.detail__body li{padding-left:1.1em;position:relative;margin-bottom:.5rem;color:#3a3633}
+.detail__body li::before{content:"—";position:absolute;left:0;color:var(--red)}
+.detail__gallery{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:clamp(1rem,2.5vh,1.6rem)}
+.detail__gallery img{width:100%;height:auto}
+.pager{max-width:1100px;margin:clamp(3.5rem,8vh,6rem) auto clamp(2.5rem,5vh,3.5rem);display:flex;justify-content:space-between;font-size:.92rem;letter-spacing:.06em;color:var(--red)}
+.pager a{display:inline-flex;gap:.6em;align-items:center;transition:opacity .35s}
+.pager a:hover{opacity:.6}
+.pager .is-empty{visibility:hidden}
+.prodlines{border-top:1px solid var(--line);text-align:center;padding:clamp(3.5rem,8vh,6rem) var(--pad)}
+.prodlines__title{font-size:.74rem;letter-spacing:.28em;text-transform:uppercase;color:var(--red);margin-bottom:2.4rem}
+.prodlines ul{list-style:none;display:flex;flex-direction:column;gap:1.05rem;align-items:center}
+.prodlines li.is-gap{height:.4rem;border-bottom:1px solid var(--line);width:2.5rem;margin:.5rem 0}
+.prodlines a{font-size:1.05rem;color:var(--ink);display:inline-flex;gap:.45em;align-items:baseline;transition:color .35s}
+.prodlines a:hover{color:var(--red)}
+.prodlines a.is-used{color:var(--red)}
+.prodlines em{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.25rem;line-height:1}
+.prodlines .airlux{font-weight:600;font-style:normal;font-family:'Jost',sans-serif;font-size:1rem}
+
 /* ---------------- REVEALS ---------------- */
 [data-reveal]{opacity:0;transform:translateY(34px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
 [data-reveal].is-in{opacity:1;transform:none}
@@ -307,6 +360,11 @@ body.menu-open .menu__nav a:nth-child(6){transition-delay:.46s}
 @media (max-width:860px){
   .topnav{display:none}
   .burger{display:flex}
+  .tagline{display:none}
+  .sort{float:none;width:auto;margin-bottom:3rem}
+  .pgrid{font-size:0}
+  .pcard{width:48%;margin-right:4%}
+  .detail__meta{gap:.4rem 2.5rem}
   .products__grid{grid-template-columns:1fr}
   .product--wide{grid-column:auto}
   .about__grid,.contact__grid,.career__grid,.portrait{grid-template-columns:1fr}
