@@ -445,7 +445,7 @@ a.map__bubble{text-decoration:none;color:inherit}
 .apply p{font-family:'Cormorant Garamond',serif;font-size:1.25rem;line-height:1.6;color:#3a3633;max-width:48ch;margin-bottom:1.4rem}
 
 /* ---------------- KONTAKT + FUNNEL ---------------- */
-.kontakt{padding:clamp(10rem,22vh,14rem) var(--pad) clamp(4rem,10vh,7rem);display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(2.5rem,7vw,6rem);align-items:start}
+.kontakt{padding:clamp(11rem,24vh,15rem) clamp(11rem,17vw,19rem) clamp(4rem,10vh,7rem) var(--pad);display:grid;grid-template-columns:.8fr 1.1fr;gap:clamp(2.5rem,6vw,5rem);align-items:start}
 .kontakt__info{font-style:normal;font-family:'Cormorant Garamond',serif;font-size:1.3rem;line-height:1.7;color:var(--ink)}
 .kontakt__info .k-name{font-size:1.9rem;margin-bottom:1.4rem}
 .kontakt__info p{margin-bottom:1.4rem}
@@ -501,7 +501,7 @@ a.map__bubble{text-decoration:none;color:inherit}
   .burger{display:flex}
   .tagline{display:none}
   .insights{grid-template-columns:1fr}
-  .kontakt{grid-template-columns:1fr;gap:3rem}
+  .kontakt{grid-template-columns:1fr;gap:3rem;padding:calc(var(--head-h) + 3rem) var(--pad) clamp(3rem,8vh,5rem)}
   .secnav{float:none;width:auto;margin-bottom:2.5rem;flex-direction:row;flex-wrap:wrap;gap:1.2rem}
   .map__hq b{display:none}
   .sort{float:none;width:auto;margin-bottom:3rem}
