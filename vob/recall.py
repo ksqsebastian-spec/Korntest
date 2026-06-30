@@ -3,7 +3,7 @@
 plus HH-buyer tenders excluded by the strict Leistungsort rule."""
 import sys
 from vobcore import load
-from matching import match_tender
+from matching_db import match_companies as match_tender
 
 data = load()
 ham = data["hamburg"]

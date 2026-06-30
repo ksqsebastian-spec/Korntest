@@ -1,53 +1,48 @@
-# VOB OCDS Hamburg — täglicher Ausschreibungs-Scan
+# VOB OCDS Hamburg → Supabase
 
-Zieht jeden Tag die laufenden öffentlichen Ausschreibungen für **Hamburg** aus der
-offiziellen Open-Data-API (`oeffentlichevergabe.de`), matcht sie auf die
-Gruppenwerk-Gewerke und legt das Ergebnis als Google Sheet ab.
+Täglicher, stiller Scan der laufenden öffentlichen Ausschreibungen für **Hamburg**
+aus der offiziellen Open-Data-API (`oeffentlichevergabe.de`, OCDS-Export), Matching
+auf die Gruppenwerk-Firmen, Ablage in **Supabase Schema `vob`**.
+Kein Firecrawl, keine Google Sheets. Läuft autonom; nur bei Fehlern wird gemeldet.
 
 ## Schnellstart
 
 ```bash
 cd vob
-python3 run_daily.py            # schreibt vob_out/final.csv + vob_out/summary.json
+# 1) bekannte URLs für Dedup ziehen (aus Supabase) -> seen.txt
+# 2) Scan + atomares SQL erzeugen:
+python3 vob_supabase.py --seen seen.txt --out scan.sql
+# 3) scan.sql per Supabase-Connector (execute_sql) ausführen
 ```
 
-Laufzeit ~15 s. Keine externen Abhängigkeiten außer `requests`.
+Laufzeit ~15 s. Einzige Abhängigkeit: `requests`.
 
 ## Pipeline (zustandslos)
 
-1. **Fetch** — rollierendes 2-Monats-Fenster (aktueller + Vormonat) als CSV-ZIP.
-   Das Fenster verhindert, dass Tender fehlen, die letzten Monat veröffentlicht
-   wurden, aber noch laufen.
-2. **Filter** (`vobcore.py`) — `formType == competition` **und** Hamburg.
-   Hamburg = Leistungsort-NUTS beginnt mit `DE6` (Stadtstaat: `DE6`/`DE60`/`DE600`),
-   ersatzweise „hamburg" im Auftraggeber, wenn kein Leistungsort gesetzt ist.
-3. **Match** (`matching.py`) — CPV-Prefix (haupt-/neben-code-gewichtet) + Titel-
-   Keywords + Urteils-Korrekturen (Metall-/Elementfassade, Infrastruktur-
-   Beschichtung, bundesweite Rahmen, harte Gewerk-Ausschlüsse).
-4. **Frist** (`enrich.py`) — echte Frist je Treffer aus der Notice-XML
-   (`TenderSubmissionDeadlinePeriod` / `ParticipationRequestReceptionPeriod`),
-   12 parallel, mit Retry. Zeitzonen-genau gegen *jetzt*; Abgelaufene raus.
-5. **Build** (`build.py`) — CSV; `Neu`-Spalte (🆕 = in den letzten 2 Tagen
-   veröffentlicht), sortiert nach Frist.
-
-Spalten: `Neu, Titel, Auftraggeber, CPV, Kategorie, Frist, Match-Firmen, Relevanz, Begründung, URL`
+1. **Fetch** (`vobcore.py`) — rollierendes 2-Monats-Fenster (aktueller + Vormonat)
+   als CSV-ZIP, damit letzten Monat veröffentlichte, noch laufende Tender nicht fehlen.
+2. **Filter** — `formType == competition` **und** Hamburg (Leistungsort-NUTS beginnt
+   mit `DE6`; ersatzweise „hamburg" im Auftraggeber, wenn kein Leistungsort gesetzt).
+3. **Dedup** — URLs, die schon in `vob.vob_tenders` stehen, werden vor dem Matching entfernt.
+4. **Match** (`matching_db.py`) — Titel + CPV gegen die aktiven `vob.companies`
+   (malerei-hantke, seehafer-elemente, gruppenwerk) und deren `keywords`.
+   relevance: `sehr hoch` / `hoch` / `mittel`. Urteils-Korrekturen: Metall-/
+   Elementfassade, Infrastruktur-Beschichtung, bundesweite Rahmen.
+5. **Frist** (`enrich.py`) — echte Frist je Treffer aus der Notice-XML
+   (parallel + Retry), zeitzonen-genau; Abgelaufene raus.
+6. **Write** (`vob_supabase.py`) — EIN atomares CTE:
+   `vob_scans` (weekly upsert auf `(calendar_week, year)`) → `vob_tenders`
+   (status `active`, scan_id) → `vob_matches` (company_id per slug-Join).
+   `urgency` wird NICHT geschrieben — die View `vob.vob_dashboard` berechnet sie aus
+   `deadline_date`.
 
 ## Qualitätskontrolle
 
 ```bash
-python3 recall.py    # listet HH-Tender mit Bau-Signal, die NICHT gematcht wurden
+python3 recall.py    # HH-Tender mit Bau-Signal, die NICHT matchen (Recall/Precision-Check)
 ```
-Dient der Recall-Prüfung (übersehene Treffer) und der Filter-Validierung.
 
-## Täglicher Lauf
+## Niemals
 
-Wird über einen Claude-Code-Trigger (Routine) gefahren, der `run_daily.py`
-ausführt und aus `vob_out/final.csv` ein Google Sheet erzeugt. Stateless —
-jeder Lauf ist eigenständig, kein Scheduling-/State-File nötig.
-
-## Bekannte offene Punkte
-
-- Matching auf Notice-Ebene aggregiert (nicht Los-Ebene): bei Mehr-Los-Notices
-  kann der angezeigte Titel vom matchenden Los abweichen.
-- `bsi` (Planung) ist titel-keyword-basiert; 71xx-Planungsleistungen ohne
-  Schlüsselwort im Titel können durchrutschen.
+`public`-Schema (totes Alt-Zeug), Firecrawl, Google Sheets, leere Daten bei
+Total-Ausfall schreiben, Repo/Vercel ändern.
