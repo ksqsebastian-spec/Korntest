@@ -1,3 +1,8 @@
 node_modules/
 .vercel/
 *.log
+
+# VOB daily-run output
+vob/vob_out/
+vob/export_*.zip
+__pycache__/
